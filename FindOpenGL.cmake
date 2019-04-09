@@ -1,7 +1,7 @@
 find_package(PackageHandleStandardArgs)
 
-set(GL_HEADER_FILES GL/gl.h GLES2/gl2.h)
-set(GL_LIBRARY_NAMES GL opengl32 GLESv2)
+set(GL_HEADER_FILES GL/gl.h OpenGL/gl.h GLES2/gl2.h ES2/gl.h)
+set(GL_LIBRARY_NAMES GL opengl32 GLESv2 OpenGLES.tbd)
 set(GL_LIBRARY_NAMES64 opengl64 ${GL_LIBRARY_NAMES} GLESv2)
 
 if(DEFINED ANDROID)
@@ -15,16 +15,17 @@ else()
 endif()
 
 find_path(GL_INCLUDE_DIR NAMES ${GL_HEADER_FILES}
-          PATHS ${CMAKE_SOURCE_DIR}
+          PATHS ${CMAKE_FIND_ROOT_PATH}
           HINTS ${GL_INCLUDE_HINT_PATH}
-          PATH_SUFFIXES include
+          PATH_SUFFIXES include System/Library/Frameworks/OpenGLES.framework/Headers
           NO_DEFAULT_PATH
           )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(GL_LIBRARY
                      NAMES ${GL_LIBRARY_NAMES}
-                     PATH_SUFFIXES bin lib32 lib
+                     PATH_SUFFIXES
+                        bin lib32 lib System/Library/Frameworks/OpenGLES.framework
                      PATHS
                         ${GL_LIBRARY_HINT_PATH}
                         ${CMAKE_FIND_ROOT_PATH}
@@ -33,7 +34,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(GL_LIBRARY
                      NAMES ${GL_LIBRARY_NAMES64}
-                     PATH_SUFFIXES bin lib lib64
+                     PATH_SUFFIXES bin lib lib64 System/Library/Frameworks/OpenGLES.framework
                      PATHS
                         ${GL_LIBRARY_HINT_PATH}
                         ${CMAKE_FIND_ROOT_PATH}

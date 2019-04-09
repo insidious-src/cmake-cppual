@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12)
 find_package(PackageHandleStandardArgs)
 
-set(EGL_HEADER_FILES EGL/egl.h)
-set(EGL_LIBRARY_NAMES EGL)
+set(EGL_HEADER_FILES EGL/egl.h UIKit.h)
+set(EGL_LIBRARY_NAMES EGL UIKit)
 
 if(DEFINED ANDROID)
     set(EGL_INCLUDE_HINT_PATH
@@ -28,29 +28,29 @@ if(NOT WIN32)
                 ${EGL_INCLUDE_HINT_PATH}
                 ${PKG_EGL_INCLUDE_DIRS}
             PATH_SUFFIXES
-                include EGL
+                include Headers
             )
 
-    find_library(EGL_LIBRARY NAMES EGL HINTS ${EGL_LIBRARY_HINT_PATH} ${PKG_EGL_LIBRARY_DIRS})
+    find_library(EGL_LIBRARY NAMES ${EGL_LIBRARY_NAMES} HINTS ${EGL_LIBRARY_HINT_PATH} ${PKG_EGL_LIBRARY_DIRS})
 
 else()
 
     find_path(EGL_INCLUDE_DIR
         NAMES ${EGL_HEADER_FILES}
-        PATHS ${CMAKE_SOURCE_DIR}
+        PATHS ${CMAKE_FIND_ROOT_PATH}
         PATH_SUFFIXES include
         )
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(EGL_LIBRARY
             NAMES ${EGL_LIBRARY_NAMES}
-            PATHS ${CMAKE_SOURCE_DIR}
+            PATHS ${CMAKE_FIND_ROOT_PATH}
             PATH_SUFFIXES bin/x86
             )
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(EGL_LIBRARY
             NAMES ${EGL_LIBRARY_NAMES}
-            PATHS ${CMAKE_SOURCE_DIR}
+            PATHS ${CMAKE_FIND_ROOT_PATH}
             PATH_SUFFIXES bin/x86_64
             )
         endif()
@@ -59,7 +59,7 @@ endif()
 
 # NB: We do *not* use the version information from pkg-config, as that
 #     is the implementation version (eg: the Mesa version)
-if(EGL_INCLUDE_DIR)
+if(EGL_INCLUDE_DIR AND NOT DEFINED IOS_PLATFORM)
         # egl.h has defines of the form EGL_VERSION_x_y for each supported
         # version; so the header for EGL 1.1 will define EGL_VERSION_1_0 and
         # EGL_VERSION_1_1.  Finding the highest supported version involves
