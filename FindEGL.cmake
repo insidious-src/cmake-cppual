@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12)
 find_package(PackageHandleStandardArgs)
 
-set(EGL_HEADER_FILES EGL/egl.h UIKit.h)
-set(EGL_LIBRARY_NAMES EGL UIKit)
+set(EGL_HEADER_FILES EGL/egl.h EAGL.h agl.h)
+set(EGL_LIBRARY_NAMES EGL OpenGLES AGL.tbd)
 
 if(DEFINED ANDROID)
     set(EGL_INCLUDE_HINT_PATH
@@ -21,17 +21,51 @@ if(NOT WIN32)
     find_package(PkgConfig)
     pkg_check_modules(PKG_EGL QUIET egl)
 
-        find_path(EGL_INCLUDE_DIR
-            NAMES
-                ${EGL_HEADER_FILES}
-            HINTS
-                ${EGL_INCLUDE_HINT_PATH}
-                ${PKG_EGL_INCLUDE_DIRS}
-            PATH_SUFFIXES
-                include Headers
-            )
+    find_path(EGL_INCLUDE_DIR
+        NAMES
+            ${EGL_HEADER_FILES}
+        PATHS
+            ${CMAKE_FIND_ROOT_PATH}
+        HINTS
+            ${EGL_INCLUDE_HINT_PATH}
+            ${PKG_EGL_INCLUDE_DIRS}
+        PATH_SUFFIXES
+            include
+            Headers
+            System/Library/Frameworks/AGL.framework/Headers
+        )
 
-    find_library(EGL_LIBRARY NAMES ${EGL_LIBRARY_NAMES} HINTS ${EGL_LIBRARY_HINT_PATH} ${PKG_EGL_LIBRARY_DIRS})
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        find_library(EGL_LIBRARY
+            NAMES
+                ${EGL_LIBRARY_NAMES}
+            HINTS
+                ${EGL_LIBRARY_HINT_PATH}
+                ${PKG_EGL_LIBRARY_DIRS}
+            PATHS
+                ${CMAKE_FIND_ROOT_PATH}
+            PATH_SUFFIXES
+                lib32
+                lib
+                System/Library/Frameworks/AGL.framework
+            NO_DEFAULT_PATH
+            )
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        find_library(EGL_LIBRARY
+            NAMES
+                ${EGL_LIBRARY_NAMES}
+            HINTS
+                ${EGL_LIBRARY_HINT_PATH}
+                ${PKG_EGL_LIBRARY_DIRS}
+            PATHS
+                ${CMAKE_FIND_ROOT_PATH}
+            PATH_SUFFIXES
+                lib
+                lib64
+                System/Library/Frameworks/AGL.framework
+            NO_DEFAULT_PATH
+            )
+    endif()
 
 else()
 
@@ -53,13 +87,13 @@ else()
             PATHS ${CMAKE_FIND_ROOT_PATH}
             PATH_SUFFIXES bin/x86_64
             )
-        endif()
+    endif()
 
 endif()
 
 # NB: We do *not* use the version information from pkg-config, as that
 #     is the implementation version (eg: the Mesa version)
-if(EGL_INCLUDE_DIR AND NOT DEFINED IOS_PLATFORM)
+if(EGL_INCLUDE_DIR AND NOT IOS_PLATFORM AND NOT OSXCROSS)
         # egl.h has defines of the form EGL_VERSION_x_y for each supported
         # version; so the header for EGL 1.1 will define EGL_VERSION_1_0 and
         # EGL_VERSION_1_1.  Finding the highest supported version involves

@@ -19,6 +19,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(SOCKETS_LIBRARY
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
+                     PATHS ${CMAKE_FIND_ROOT_PATH}
                      PATH_SUFFIXES lib32 lib
                      NO_DEFAULT_PATH
                      )
@@ -26,6 +27,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(SOCKETS_LIBRARY
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
+                     PATHS ${CMAKE_FIND_ROOT_PATH}
                      PATH_SUFFIXES lib lib64
                      NO_DEFAULT_PATH
                      )

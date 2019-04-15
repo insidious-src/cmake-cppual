@@ -1,7 +1,7 @@
 find_package(PackageHandleStandardArgs)
 
-set(GL_HEADER_FILES GL/gl.h OpenGL/gl.h GLES2/gl2.h ES2/gl.h)
-set(GL_LIBRARY_NAMES GL opengl32 GLESv2 OpenGLES.tbd)
+set(GL_HEADER_FILES GL/gl.h OpenGL/gl.h GLES2/gl2.h ES2/gl.h gl.h)
+set(GL_LIBRARY_NAMES opengl32 GL GLESv2 OpenGLES.tbd)
 set(GL_LIBRARY_NAMES64 opengl64 ${GL_LIBRARY_NAMES} GLESv2)
 
 if(DEFINED ANDROID)
@@ -14,10 +14,15 @@ else()
     set(GL_LIBRARY_HINT_PATH "/usr")
 endif()
 
-find_path(GL_INCLUDE_DIR NAMES ${GL_HEADER_FILES}
+find_path(GL_INCLUDE_DIR
+          NAMES ${GL_HEADER_FILES}
           PATHS ${CMAKE_FIND_ROOT_PATH}
           HINTS ${GL_INCLUDE_HINT_PATH}
-          PATH_SUFFIXES include System/Library/Frameworks/OpenGLES.framework/Headers
+          PATH_SUFFIXES
+            include
+            Headers
+            System/Library/Frameworks/OpenGLES.framework/Headers
+            System/Library/Frameworks/OpenGL.framework/Headers
           NO_DEFAULT_PATH
           )
 
@@ -25,7 +30,11 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(GL_LIBRARY
                      NAMES ${GL_LIBRARY_NAMES}
                      PATH_SUFFIXES
-                        bin lib32 lib System/Library/Frameworks/OpenGLES.framework
+                        bin
+                        lib32
+                        lib
+                        System/Library/Frameworks/OpenGLES.framework
+                        System/Library/Frameworks/OpenGL.framework/Libraries
                      PATHS
                         ${GL_LIBRARY_HINT_PATH}
                         ${CMAKE_FIND_ROOT_PATH}
@@ -34,7 +43,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(GL_LIBRARY
                      NAMES ${GL_LIBRARY_NAMES64}
-                     PATH_SUFFIXES bin lib lib64 System/Library/Frameworks/OpenGLES.framework
+                     PATH_SUFFIXES
+                        bin
+                        lib
+                        lib64
+                        System/Library/Frameworks/OpenGLES.framework
+                        System/Library/Frameworks/OpenGL.framework/Libraries
                      PATHS
                         ${GL_LIBRARY_HINT_PATH}
                         ${CMAKE_FIND_ROOT_PATH}

@@ -249,7 +249,9 @@ function(install_package
                         $<WIN_DEFINED:NO_DEFAULT_PATH >
                         )
 
-                    install_file(${PATH_${LIB}} . ${PACKAGE_NAME_LOWER})
+                    if(PATH_${LIB})
+                        install_file(${PATH_${LIB}} . ${PACKAGE_NAME_LOWER})
+                    endif()
                 endif()
             endforeach()
         endif()
@@ -275,6 +277,7 @@ function(install_package
         set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_LIST_DIR}/LICENSE.md")
         set(CPACK_PACKAGE_INSTALL_DIRECTORY "${COMPANY_NAME} ${PACKAGE_NAME}")
         set(CPACK_NSIS_MODIFY_PATH ON)
+        #set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 
         include(CPack)
 
@@ -286,6 +289,7 @@ function(install_package
             COMMENT "Building package ${PACKAGE_NAME_LOWER}..."
             )
 
+        # make sure package building is executed sequentially
         set(INSTALL_PACKAGES ${PACKAGE_NAME_LOWER} ${INSTALL_PACKAGES} PARENT_SCOPE)
     endif()
 endfunction()
