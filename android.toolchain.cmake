@@ -66,7 +66,7 @@ else()
   endif()
 endif()
 #unset(ANDROID_NDK_EXPECTED_PATH)
-file(TO_CMAKE_PATH "${ANDROID_NDK}" ANDROID_NDK)
+#file(TO_CMAKE_PATH "${ANDROID_NDK}" ANDROID_NDK)
 
 # Android NDK revision
 # Possible formats:
