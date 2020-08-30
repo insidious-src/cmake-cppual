@@ -167,6 +167,8 @@ function(install_package
             set(ANDROID_DEPENDS DEPENDS ${ARG_DEPENDS})
         endif()
 
+        message(STATUS "Package Name: ${PACKAGE_NAME_LOWER}")
+
         add_qt_android_apk("${PACKAGE_NAME_LOWER}" "${ARG_TARGETS}"
             NAME "${COMPANY_NAME} ${PACKAGE_NAME}"
             VERSION_CODE "${MAJOR_VERSION}${MINOR_VERSION}${PATCH_VERSION}"

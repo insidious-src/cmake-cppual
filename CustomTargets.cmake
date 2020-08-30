@@ -27,7 +27,7 @@ function(add_custom_executable)
     endforeach(dep)
 
     if(ANDROID)
-        add_library(${PARSED_ARGS_NAME} ${TARGET_SRCS})
+        add_library(${PARSED_ARGS_NAME} SHARED ${TARGET_SRCS})
     else()
         add_executable(${PARSED_ARGS_NAME} ${TARGET_SRCS})
     endif()
