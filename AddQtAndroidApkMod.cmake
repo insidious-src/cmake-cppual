@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_policy(SET CMP0026 OLD) # allow use of the LOCATION target property
 
 # store the current source directory for future use
 set(QT_ANDROID_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -67,7 +68,15 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     cmake_parse_arguments(ARG "INSTALL" "NAME;VERSION_CODE;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD" "DEPENDS;KEYSTORE" ${ARGN})
 
     # extract the full path of the source target binary
-    set(QT_ANDROID_APP_PATH "$<TARGET_FILE:${SOURCE_TARGET}>")  # full file path to the app's main shared library
+
+    #set(QT_ANDROID_APP_PATH "$<TARGET_FILE:${SOURCE_TARGET}>")  # full file path to the app's main shared library
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        get_property(QT_ANDROID_APP_PATH TARGET ${SOURCE_TARGET} PROPERTY DEBUG_LOCATION)
+    else()
+        get_property(QT_ANDROID_APP_PATH TARGET ${SOURCE_TARGET} PROPERTY LOCATION)
+    endif()
+
     if(${Qt5Core_VERSION} VERSION_GREATER_EQUAL 5.14)
         set(QT_ANDROID_SUPPORT_MULTI_ABI ON)
     endif()
@@ -157,13 +166,18 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         foreach(LIB ${ARG_DEPENDS})
             if(TARGET ${LIB})
                 # item is a CMake target, extract the library path
-                set(LIB "$<TARGET_FILE:${LIB}>")
+                if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+                    get_property(LIB_PATH TARGET ${LIB} PROPERTY DEBUG_LOCATION)
+                else()
+                    get_property(LIB_PATH TARGET ${LIB} PROPERTY LOCATION)
+                endif()
+                set(LIB ${LIB_PATH})
             endif()
-            if(EXTRA_LIBS)
-                set(EXTRA_LIBS "${EXTRA_LIBS},${LIB}")
-            else()
-                set(EXTRA_LIBS "${LIB}")
-            endif()
+        if(EXTRA_LIBS)
+            set(EXTRA_LIBS "${EXTRA_LIBS},${LIB}")
+        else()
+            set(EXTRA_LIBS "${LIB}")
+        endif()
         endforeach()
         set(QT_ANDROID_APP_EXTRA_LIBS "\"android-extra-libs\": \"${EXTRA_LIBS}\",")
     endif()

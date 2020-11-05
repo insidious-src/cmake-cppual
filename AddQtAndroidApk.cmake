@@ -272,9 +272,11 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     endif()
 
     # specify the Android API level
-    if(ANDROID_PLATFORM_LEVEL)
-        set(TARGET_LEVEL_OPTIONS --android-platform android-${ANDROID_PLATFORM_LEVEL})
-    endif()
+    #if(ANDROID_PLATFORM_LEVEL)
+    #    set(TARGET_LEVEL_OPTIONS --android-platform android-${ANDROID_PLATFORM_LEVEL})
+    #endif()
+
+    set(TARGET_LEVEL_OPTIONS --android-platform android-29)
 
     # determine the build type to pass to androiddeployqt
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT ARG_KEYSTORE)
