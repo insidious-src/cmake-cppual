@@ -39,7 +39,7 @@ find_package_handle_standard_args(WMLegacy REQUIRED_VARS WMLEGACY_LIBRARY WMLEGA
 if(WMLEGACY_FOUND AND NOT TARGET WMLegacy::Library)
                 add_library(WMLegacy::Library UNKNOWN IMPORTED)
                 set_target_properties(WMLegacy::Library PROPERTIES
-                                IMPORTED_LOCATION "${WM_LEGACY_LIBRARY}"
+                                IMPORTED_LOCATION "${WMLEGACY_LIBRARY}"
                                 INTERFACE_INCLUDE_DIRECTORIES "${WM_INCLUDE_DIR}"
                                 )
 endif()
