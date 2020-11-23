@@ -28,7 +28,7 @@ find_path(WMLEGACY_INCLUDE_DIR
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             find_library(WMLEGACY_LIBRARY
                 NAMES
-                        ${LIBRARY_NAMES}
+                        ${WMLEGACY_LIBRARY_NAMES}
                 PATH_SUFFIXES
                         lib lib64
                 )
