@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.6)
 include(CheckCXXSourceCompiles)
 
 macro(CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
@@ -18,7 +18,7 @@ macro(CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
          FAIL_REGEX "[Uu]nknown option"                         # HP
          FAIL_REGEX "[Ww]arning: [Oo]ption"                     # SunPro
          FAIL_REGEX "command option .* is not recognized"       # XL
-         FAIL_REGEX "not supported in this configuration; ignored"       # AIX
+         FAIL_REGEX "not supported in this configuration; ignored" # AIX
          FAIL_REGEX "File with unknown suffix passed to linker" # PGI
          FAIL_REGEX "WARNING: unknown flag:"                    # Open64
          )
@@ -39,12 +39,12 @@ CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 CHECK_CXX_COMPILER_FLAG("-std=c++1z" COMPILER_SUPPORTS_CXX0Z)
 
 if(COMPILER_SUPPORTS_CXX17)
-        add_definitions(-std=c++17)
+#        add_definitions(-std=c++17)
 elseif(COMPILER_SUPPORTS_CXX0Z)
-        add_definitions(-std=c++1z)
+#        add_definitions(-std=c++1z)
 else()
         message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support.")
 endif()
 
 # use optimized instruction set
-#add_definitions(-msse -msse2)
+# add_definitions(-msse -msse2)
