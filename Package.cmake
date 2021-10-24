@@ -100,7 +100,7 @@ function(install_package
         )
 
     # parse the macro arguments
-    cmake_parse_arguments(ARG "" "" "TARGETS;DEPENDS" ${ARGN})
+    cmake_parse_arguments(ARG "INSTALL" "KEYSTORE_PASSWORD" "TARGETS;DEPENDS;KEYSTORE" ${ARGN})
 
     if(ARG_TARGETS)
     else()
@@ -167,17 +167,30 @@ function(install_package
             set(ANDROID_DEPENDS DEPENDS ${ARG_DEPENDS})
         endif()
 
+        # check if the apk must be signed
+        if(ARG_KEYSTORE)
+            set(ANDROID_KEYSTORE KEYSTORE ${ARG_KEYSTORE})
+            if(ARG_KEYSTORE_PASSWORD)
+                set(ANDROID_KEYSTORE_PASSWORD KEYSTORE_PASSWORD ${ARG_KEYSTORE_PASSWORD})
+            endif()
+        endif()
+
+        if(ARG_INSTALL)
+            set(ANDROID_INSTALL INSTALL)
+        endif()
+
         message(STATUS "Package Name: ${PACKAGE_NAME_LOWER}")
 
         add_qt_android_apk("${PACKAGE_NAME_LOWER}" "${ARG_TARGETS}"
             NAME "${COMPANY_NAME} ${PACKAGE_NAME}"
             VERSION_CODE "${MAJOR_VERSION}${MINOR_VERSION}${PATCH_VERSION}"
+            VERSION_NAME "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
             PACKAGE_NAME "org.${COMPANY_NAME_LOWER}.${PACKAGE_NAME_LOWER}"
             BUILDTOOLS_REVISION "${ANDROID_BUILDTOOLS_REVISION}"
-            #KEYSTORE ${CMAKE_CURRENT_LIST_DIR}/mykey.keystore myalias
-            #KEYSTORE_PASSWORD xxxx
+            ${ANDROID_KEYSTORE}
+            ${ANDROID_KEYSTORE_PASSWORD}
             ${ANDROID_DEPENDS}
-            INSTALL
+            ${ANDROID_INSTALL}
             )
 
     elseif(IOS_PLATFORM)
@@ -268,7 +281,7 @@ function(install_package
             set(CPACK_GENERATOR TGZ)
         endif()
 
-        set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
+        set(CPACK_PACKAGE_NAME "${PACKAGE_NAME_LOWER}")
         set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
         set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_NAME} Installation.")
         set(CPACK_PACKAGE_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")

@@ -39,11 +39,11 @@ CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 CHECK_CXX_COMPILER_FLAG("-std=c++1z" COMPILER_SUPPORTS_CXX0Z)
 
 if(COMPILER_SUPPORTS_CXX17)
-#        add_definitions(-std=c++17)
+#    add_definitions(-std=c++17)
 elseif(COMPILER_SUPPORTS_CXX0Z)
-#        add_definitions(-std=c++1z)
+#    add_definitions(-std=c++1z)
 else()
-        message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support.")
+    message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support.")
 endif()
 
 # use optimized instruction set
