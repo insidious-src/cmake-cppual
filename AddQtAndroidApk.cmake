@@ -141,7 +141,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     # generate a source package directory if none was provided, or if we need to configure a manifest file
     if(NOT QT_ANDROID_APP_PACKAGE_SOURCE_ROOT)
         # create our own configured package directory in build dir
-        set(QT_ANDROID_APP_PACKAGE_SOURCE_ROOT "${CMAKE_CURRENT_BINARY_DIR}/package")
+        set(QT_ANDROID_APP_PACKAGE_SOURCE_ROOT "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-src")
 
         # create the manifest from the template file
         if(NOT QT_ANDROID_MANIFEST_TEMPLATE)
@@ -345,6 +345,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         DEPENDS ${SOURCE_TARGET}
         ${QT_ANDROID_PRE_COMMANDS}
         # it seems that recompiled libraries are not copied if we don't remove them first
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}/build
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${QT_ANDROID_APP_BINARY_DIR}/libs/${ANDROID_ABI}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${QT_ANDROID_APP_BINARY_DIR}/libs/${ANDROID_ABI}
         COMMAND ${CMAKE_COMMAND} -E copy ${QT_ANDROID_APP_PATH} ${QT_ANDROID_APP_BINARY_DIR}/libs/${ANDROID_ABI}
