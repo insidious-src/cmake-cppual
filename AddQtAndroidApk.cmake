@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 # store the current source directory for future use
 set(QT_ANDROID_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -197,16 +197,20 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         if(ANDROID_STL_SHARED_LIBRARIES)
             list(GET ANDROID_STL_SHARED_LIBRARIES 0 STL_LIBRARY_NAME) # we can only give one to androiddeployqt
             if(ANDROID_STL_PATH)
-                set(QT_ANDROID_STL_PATH "${ANDROID_STL_PATH}/libs/${ANDROID_ABI}/lib${ANDROID_STL}.so")
+                set(QT_ANDROID_STL_PATH
+                    "${ANDROID_STL_PATH}/libs/${ANDROID_ABI}/lib${ANDROID_STL}.so")
             else()
-                set(QT_ANDROID_STL_PATH "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/lib${ANDROID_STL}.so")
+                set(QT_ANDROID_STL_PATH
+                    "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/lib${ANDROID_STL}.so")
             endif()
         elseif(ANDROID_STL STREQUAL c++_shared)
-            set(QT_ANDROID_STL_PATH "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/libc++_shared.so")
+            set(QT_ANDROID_STL_PATH
+                "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/libc++_shared.so")
         else()
             message(WARNING "ANDROID_STL (${ANDROID_STL}) isn't a known shared stl library."
                 "You should consider setting ANDROID_STL to c++_shared (like Qt).")
-            set(QT_ANDROID_STL_PATH "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/libc++_shared.so")
+            set(QT_ANDROID_STL_PATH
+                "${QT_ANDROID_NDK_ROOT}/sources/cxx-stl/${ANDROID_STL_PREFIX}/libs/${ANDROID_ABI}/libc++_shared.so")
         endif()
     endif()
 
@@ -254,7 +258,8 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         set(QT_ANDROID_TOOLCHAIN_VERSION)
         set(QT_ANDROID_TOOL_PREFIX "llvm")
     else()
-        string(REGEX MATCH "${QT_ANDROID_NDK_ROOT}/toolchains/(.*)-(.*)/prebuilt/.*/bin/(.*)-" ANDROID_TOOLCHAIN_PARSED ${ANDROID_TOOLCHAIN_PREFIX})
+        string(REGEX MATCH "${QT_ANDROID_NDK_ROOT}/toolchains/(.*)-(.*)/prebuilt/.*/bin/(.*)-"
+            ANDROID_TOOLCHAIN_PARSED ${ANDROID_TOOLCHAIN_PREFIX})
         if(ANDROID_TOOLCHAIN_PARSED)
             set(QT_ANDROID_TOOLCHAIN_PREFIX ${CMAKE_MATCH_1})
             set(QT_ANDROID_TOOLCHAIN_VERSION ${CMAKE_MATCH_2})
@@ -267,8 +272,6 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     # make sure that the output directory for the Android package exists
     set(QT_ANDROID_APP_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI})
     file(MAKE_DIRECTORY ${QT_ANDROID_APP_BINARY_DIR}/libs/${ANDROID_ABI})
-
-
 
     # create the configuration file that will feed androiddeployqt
     # 1. replace placeholder variables at generation time
@@ -318,11 +321,13 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     endif()
 
     # specify the Android API level
-    #if(ANDROID_PLATFORM_LEVEL)
-    #    set(TARGET_LEVEL_OPTIONS --android-platform android-${ANDROID_PLATFORM_LEVEL})
-    #endif()
+    if(ANDROID_PLATFORM_LEVEL)
+        set(TARGET_LEVEL_OPTIONS --android-platform android-${ANDROID_PLATFORM_LEVEL})
+    else()
+        set(TARGET_LEVEL_OPTIONS --android-platform android-21)
+    endif()
 
-    set(TARGET_LEVEL_OPTIONS --android-platform android-30)
+    message(STATUS "Android Platform Level: ${ANDROID_PLATFORM_LEVEL}")
 
     # determine the build type to pass to androiddeployqt
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -352,14 +357,14 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         ${TARGET_LEVEL_OPTIONS}
         ${INSTALL_OPTIONS}
         ${SIGN_OPTIONS}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        COMMAND ${CMAKE_COMMAND} -E copy
-        "${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
-        "${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        #POST_BUILD
+        #COMMAND ${CMAKE_COMMAND} -E make_directory
+        #${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        #COMMAND ${CMAKE_COMMAND} -E copy_directory
+        #${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        #COMMAND ${CMAKE_COMMAND} -E copy
+        #"${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        #"${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
     )
 
 endmacro()

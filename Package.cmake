@@ -100,7 +100,7 @@ function(install_package
         )
 
     # parse the macro arguments
-    cmake_parse_arguments(ARG "INSTALL" "KEYSTORE_PASSWORD" "TARGETS;DEPENDS;KEYSTORE" ${ARGN})
+    cmake_parse_arguments(ARG "INSTALL" "KEYSTORE_PASSWORD" "TARGETS;DEPENDS;KEYSTORE;PACKAGE_SOURCES" ${ARGN})
 
     if(ARG_TARGETS)
     else()
@@ -175,6 +175,10 @@ function(install_package
             endif()
         endif()
 
+        if(ARG_PACKAGE_SOURCES)
+            set(ANDROID_PACKAGE_SOURCES PACKAGE_SOURCES ${ARG_PACKAGE_SOURCES})
+        endif()
+
         if(ARG_INSTALL)
             set(ANDROID_INSTALL INSTALL)
         endif()
@@ -186,7 +190,9 @@ function(install_package
             VERSION_CODE "${MAJOR_VERSION}${MINOR_VERSION}${PATCH_VERSION}"
             VERSION_NAME "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
             PACKAGE_NAME "org.${COMPANY_NAME_LOWER}.${PACKAGE_NAME_LOWER}"
+            PACKAGE_SOURCES "${CMAKE_CURRENT_LIST_DIR}/android/res"
             BUILDTOOLS_REVISION "${ANDROID_BUILDTOOLS_REVISION}"
+            ${ANDROID_PACKAGE_SOURCES}
             ${ANDROID_KEYSTORE}
             ${ANDROID_KEYSTORE_PASSWORD}
             ${ANDROID_DEPENDS}
