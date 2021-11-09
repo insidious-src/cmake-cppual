@@ -275,8 +275,19 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
 
     # create the configuration file that will feed androiddeployqt
     # 1. replace placeholder variables at generation time
-    configure_file(${QT_ANDROID_SOURCE_DIR}/qtdeploy.json.in
-      ${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json.in @ONLY)
+
+    if(ARG_PACKAGE_SOURCES AND EXISTS "${ARG_PACKAGE_SOURCES}/qtdeploy.json.in")
+        configure_file(${ARG_PACKAGE_SOURCES}/qtdeploy.json.in
+          ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json.in @ONLY)
+    else()
+        configure_file(${QT_ANDROID_SOURCE_DIR}/qtdeploy.json.in
+          ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json.in @ONLY)
+    endif()
+
+    set(QT_DEPLOY_FILE_TEMPLATE
+        "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json.in")
+    set(QT_DEPLOY_FILE
+        "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json")
 
     STRING(REGEX REPLACE "\"armeabi-v7a\":\"armeabi-v7a\"" "\"armeabi-v7a\" : \"arm-linux-androideabi\""
     QT_ANDROID_ARCHITECTURES ${QT_ANDROID_ARCHITECTURES})
@@ -292,13 +303,14 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
 
     # 2. evaluate generator expressions at build time
     file(GENERATE
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json
-        INPUT ${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json.in
-    )
+         OUTPUT ${QT_DEPLOY_FILE}
+         INPUT  ${QT_DEPLOY_FILE_TEMPLATE}
+         )
+
     file(GENERATE
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json
-        INPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json.in
-    )
+         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json
+         INPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json.in
+         )
 
     # 3. Configure build.gradle to properly work with Android Studio import
     set(QT_ANDROID_NATIVE_API_LEVEL ${ANDROID_NATIVE_API_LEVEL})
@@ -352,20 +364,21 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         COMMAND ${QT_ANDROID_QT_ROOT}/bin/androiddeployqt
         --verbose
         --output ${QT_ANDROID_APP_BINARY_DIR}
-        --input ${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json
+        --input ${QT_DEPLOY_FILE}
         --gradle
         ${QT_ANDROID_BUILD_TYPE}
         ${TARGET_LEVEL_OPTIONS}
         ${INSTALL_OPTIONS}
         ${SIGN_OPTIONS}
         #POST_BUILD
-        #COMMAND ${CMAKE_COMMAND} -E make_directory
-        #${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        #COMMAND ${CMAKE_COMMAND} -E copy_directory
-        #${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        #COMMAND ${CMAKE_COMMAND} -E copy
-        #"${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
-        #"${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        "${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
     )
 
 endmacro()
