@@ -4,8 +4,8 @@ if(DEFINED ANDROID)
     set(FREETYPE_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
 else()
-    set(SNDFILE_INCLUDE_HINT_PATH "/usr")
-    set(SNDFILE_LIBRARY_HINT_PATH "/usr")
+    set(FREETYPE_LIBRARY_HINT_PATH "/usr")
+    set(FREETYPE_LIBRARY_HINT_PATH "/usr")
 endif()
 
 set(FREETYPE_FIND_ARGS
@@ -13,7 +13,6 @@ set(FREETYPE_FIND_ARGS
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
-  NO_DEFAULT_PATH
 )
 
 find_path(
@@ -63,6 +62,7 @@ if(NOT FREETYPE_LIBRARY)
     NAMES
       freetype-6
       freetype6
+      freetype
       freetyped
       libfreetyped
       freetype219d

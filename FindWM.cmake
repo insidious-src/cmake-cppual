@@ -22,7 +22,6 @@ find_path(WM_INCLUDE_DIR
                 ${CMAKE_SOURCE_DIR}
         PATH_SUFFIXES
                 include
-        NO_DEFAULT_PATH
         )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)

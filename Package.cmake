@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 cmake_policy(SET CMP0026 OLD) # allow use of the LOCATION target property
+cmake_policy(SET CMP0109 OLD)
 
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS TRUE)
 
@@ -33,6 +34,9 @@ set(SYSTEM_LIBS_SKIP
     "IPHLPAPI.dll"
     "dwmapi.dll"
     "UxTheme.dll"
+    "dxgi.dll"
+    "SETUPAPI.dll"
+    "d3d11.dll"
     )
 
 #separate_arguments(SYSTEM_LIBS_SKIP)
@@ -56,18 +60,19 @@ endfunction()
 function(install_shared DLL DIRECTORY MODULE)
     # find the release *.dll file
     get_target_property(SRC_LIB_LOCATION ${DLL} LOCATION)
+
     message(STATUS "${SRC_LIB_LOCATION}")
 
     install(FILES ${SRC_LIB_LOCATION}
-        DESTINATION ${DIRECTORY}
-        COMPONENT ${MODULE}
-        PERMISSIONS
-            OWNER_READ
-            GROUP_READ
-            WORLD_READ
-            OWNER_EXECUTE
-            GROUP_EXECUTE
-            WORLD_EXECUTE
+            DESTINATION ${DIRECTORY}
+            COMPONENT ${MODULE}
+            PERMISSIONS
+                OWNER_READ
+                GROUP_READ
+                WORLD_READ
+                OWNER_EXECUTE
+                GROUP_EXECUTE
+                WORLD_EXECUTE
         )
 endfunction()
 
@@ -75,19 +80,19 @@ function(install_target TARGET DIRECTORY MODULE)
     message(STATUS "${TARGET}")
 
     install(TARGETS ${TARGET}
-        RUNTIME
-        DESTINATION ${DIRECTORY}
-        COMPONENT ${MODULE}
-        PERMISSIONS
-            OWNER_WRITE
-            OWNER_READ
-            GROUP_WRITE
-            GROUP_READ
-            WORLD_WRITE
-            WORLD_READ
-            OWNER_EXECUTE
-            GROUP_EXECUTE
-            WORLD_EXECUTE
+            RUNTIME
+            DESTINATION ${DIRECTORY}
+            COMPONENT ${MODULE}
+            PERMISSIONS
+                OWNER_WRITE
+                OWNER_READ
+                GROUP_WRITE
+                GROUP_READ
+                WORLD_WRITE
+                WORLD_READ
+                OWNER_EXECUTE
+                GROUP_EXECUTE
+                WORLD_EXECUTE
         )
 endfunction()
 
@@ -125,18 +130,29 @@ function(install_package
                 endif()
 
                 # extract dependencies ignoring the system ones
-                get_prerequisites(${LIB_PATH} PREREQUISITES 0 1 "" "")
+                get_prerequisites(${LIB_PATH} PREREQUISITES 0 1
+                    "${CMAKE_CURRENT_BINARY_DIR}"
+                    "/usr/${TOOLCHAIN_PREFIX}/bin")
 
                 foreach(PREREQ_LIB ${PREREQUISITES})
                     get_filename_component(REALPATH_LIB "${PREREQ_LIB}" REALPATH)
-                    list(APPEND DEPENDENCIES ${REALPATH_LIB})
+
+                    if (TOOLCHAIN_PREFIX)
+                        string(REPLACE ".dll.a" ".dll"
+                            REALPATH_LIB ${REALPATH_LIB})
+
+                        string(REPLACE "${CMAKE_SOURCE_DIR}" "/usr/${TOOLCHAIN_PREFIX}/bin"
+                            REALPATH_LIB ${REALPATH_LIB})
+
+                        list(APPEND DEPENDENCIES ${REALPATH_LIB})
+                    elseif(NOT ${REALPATH_LIB} STREQUAL "${CMAKE_SOURCE_DIR}/${PREREQ_LIB}")
+                        list(APPEND DEPENDENCIES ${REALPATH_LIB})
+                    endif()
+
                 endforeach()
-
-                list(APPEND DEPENDENCIES ${PREREQUISITES})
-
             endif()
 
-            list(APPEND DEPENDENCIES "${LIB}")
+            list(APPEND DEPENDENCIES ${LIB})
         endforeach()
 
         # remove duplicates
@@ -151,12 +167,15 @@ function(install_package
             # windows format on linux & unix format
             list(REMOVE_ITEM DEPENDENCIES
                 "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            list(REMOVE_ITEM DEPENDENCIES
+                "/usr/${TOOLCHAIN_PREFIX}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
         endforeach()
 
         # remove system libraries
         foreach(LIB_SKIP ${SYSTEM_LIBS_SKIP})
-            list(REMOVE_ITEM DEPENDENCIES "${LIB_SKIP}")
+            list(REMOVE_ITEM DEPENDENCIES "/usr/${TOOLCHAIN_PREFIX}/bin/${LIB_SKIP}")
         endforeach()
+
     endif()
 
     if(ANDROID)
@@ -233,46 +252,57 @@ function(install_package
 #            COMMENT "Building package ${PACKAGE_NAME_LOWER}..."
 #            )
     else()
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-            set(WIN_DEFINED 1)
-        else()
-            set(WIN_DEFINED 0)
-        endif()
-
         message(STATUS "Files to install:")
 
         if(DEPENDENCIES)
             foreach(LIB ${DEPENDENCIES})
                 if(TARGET ${LIB})
-
                     install_shared(${LIB} . ${PACKAGE_NAME_LOWER})
                 else()
                     if(${LIB} MATCHES "Qt5Gui${CMAKE_SHARED_LIBRARY_SUFFIX}")
                         if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-                            install_shared(Qt5::QWindowsIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
+                            install_file(${LIB} . ${PACKAGE_NAME_LOWER})
+
+                            #install_shared(Qt5::QWindowsIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
+                            set(QWindowsPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/platforms/qwindows.dll")
+
+                            #set(TOOLCHAIN_BIN_DIR "/usr/${TOOLCHAIN_PREFIX}/bin")
+
+                            install_file(${QWindowsPlugin} platforms ${PACKAGE_NAME_LOWER})
+
+
+                            #install_file("${TOOLCHAIN_BIN_DIR}/Qt5Svg.dll" . ${PACKAGE_NAME_LOWER})
+                            #install_file("${TOOLCHAIN_BIN_DIR}/libgcc_s_dw2-1.dll" . ${PACKAGE_NAME_LOWER})
+
+                            #install_file("${TOOLCHAIN_BIN_DIR}/libssl-1_1-x64.dll" . ${PACKAGE_NAME_LOWER})
+                            #install_file("${TOOLCHAIN_BIN_DIR}/libcrypto-1_1-x64.dll" . ${PACKAGE_NAME_LOWER})
+
                         elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
                             install_shared(Qt5::QXcbIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
                             #install_shared(Qt5::QWaylandIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
                         else()
                             install_shared(Qt5::QXcbIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
                         endif()
+                    else()
+                        install_file(${LIB} . ${PACKAGE_NAME_LOWER})
                     endif()
 
-                    string(FIND ${LIB} "/" SUB_STR_POS REVERSE)
+#                    string(FIND ${LIB} "/" SUB_STR_POS REVERSE)
 
-                    if(NOT ${SUB_STR_POS} MATCHES -1)
-                        string(SUBSTRING ${LIB} ${SUB_STR_POS} -1 LIB)
-                    endif()
+#                    if(NOT ${SUB_STR_POS} MATCHES -1)
+#                        string(SUBSTRING ${LIB} ${SUB_STR_POS} -1 LIB)
+#                    endif()
 
-                    find_library(PATH_${LIB}
-                        NAMES ${LIB}
-                        $<WIN_DEFINED:HINTS "/usr/${TOOLCHAIN_PREFIX}/bin" >
-                        $<WIN_DEFINED:NO_DEFAULT_PATH >
-                        )
+#                    find_library(PATH_${LIB}
+#                        NAMES ${LIB}
+#                        HINTS "/usr/${TOOLCHAIN_PREFIX}/bin"
+#                        NO_DEFAULT_PATH
+#                        )
 
-                    if(PATH_${LIB})
-                        install_file(${PATH_${LIB}} . ${PACKAGE_NAME_LOWER})
-                    endif()
+#                    if(PATH_${LIB})
+#                        install_file(${PATH_${LIB}} . ${PACKAGE_NAME_LOWER})
+#                    endif()
                 endif()
             endforeach()
         endif()
