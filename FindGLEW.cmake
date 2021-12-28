@@ -2,7 +2,7 @@ find_package(PackageHandleStandardArgs)
 
 set(HEADER_FILES GL/glew.h)
 set(LIBRARY_NAMES glew32 GLEW glew glew32s)
-set(LIBRARY_NAMES64 glew64 GLEW glew glew64s)
+set(LIBRARY_NAMES64 glew64 glew32 GLEW glew glew64s)
 
 find_path(GLEW_INCLUDE_DIR
           NAMES ${HEADER_FILES}
@@ -16,7 +16,6 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                     ${CMAKE_FIND_ROOT_PATH}
                     ${CMAKE_SOURCE_DIR}
                     /usr
-                NO_DEFAULT_PATH
                 )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(GLEW_LIBRARY
@@ -26,7 +25,6 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                     ${CMAKE_FIND_ROOT_PATH}
                     ${CMAKE_SOURCE_DIR}
                     /usr
-                NO_DEFAULT_PATH
                 )
 endif()
 
