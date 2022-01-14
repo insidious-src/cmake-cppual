@@ -1,12 +1,15 @@
 find_package(PackageHandleStandardArgs)
 
-set(DL_LIBRARIES dl libpsapi.dll psapi.dll psapi)
+set(DL_LIBRARIES dl psapi)
 
 if(DEFINED ANDROID)
     set(DL_INCLUDE_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/")
     set(DL_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(DL_INCLUDE_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
+    set(DL_LIBRARY_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
 else()
     set(DL_INCLUDE_HINT_PATH "/usr")
     set(DL_LIBRARY_HINT_PATH "/usr")
@@ -28,7 +31,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                 HINTS
                         ${DL_LIBRARY_HINT_PATH}
                 PATH_SUFFIXES
-                        bin lib32 lib
+                        bin lib32
                 )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(DL_LIBRARY
@@ -41,7 +44,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                 )
 endif()
 
-find_package_handle_standard_args(DL REQUIRED_VARS DL_LIBRARY DL_INCLUDE_DIR)
+find_package_handle_standard_args(DL REQUIRED_VARS DL_INCLUDE_DIR DL_LIBRARY)
 
 if(DL_FOUND AND NOT TARGET DL::Library)
         add_library(DL::Library UNKNOWN IMPORTED)
