@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 find_package(PackageHandleStandardArgs)
 
-set(EGL_HEADER_FILES EGL/egl.h EAGL.h agl.h)
-set(EGL_LIBRARY_NAMES EGL OpenGLES AGL.tbd)
+#set(EGL_HEADER_FILES EGL/egl.h EAGL.h agl.h)
+#set(EGL_LIBRARY_NAMES EGL OpenGLES AGL.tbd)
+
+set(EGL_HEADER_FILES EGL/egl.h)
+set(EGL_LIBRARY_NAMES EGL)
 
 if(DEFINED ANDROID)
     set(EGL_INCLUDE_HINT_PATH

@@ -312,11 +312,13 @@ function(install_package
         endforeach()
 
         if(WIN32 OR WIN64)
-            set(CPACK_GENERATOR NSIS)
+            set(PKG_GENERATOR NSIS)
         else()
-            set(CPACK_GENERATOR TGZ)
+            set(PKG_GENERATOR TGZ)
         endif()
 
+        set(CPACK_GENERATOR ${PKG_GENERATOR})
+        set(CPACK_COMPONENTS_GROUPING IGNORE)
         set(CPACK_PACKAGE_NAME "${PACKAGE_NAME_LOWER}")
         set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
         set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_NAME} Installation.")
@@ -333,14 +335,32 @@ function(install_package
         include(CPack)
 
         add_custom_target(
-            ${PACKAGE_NAME_LOWER}
+            ${PACKAGE_NAME_LOWER}_pkg
             ALL
             DEPENDS ${ARG_TARGETS} ${INSTALL_PACKAGES}
-            COMMAND ${CMAKE_CPACK_COMMAND} -DCPACK_COMPONENTS_ALL="${PACKAGE_NAME_LOWER}" -DCPACK_PACKAGE_FILE_NAME="${PACKAGE_NAME_LOWER}-${CPACK_PACKAGE_VERSION}-$<CONFIGURATION>"
+            COMMAND ${CMAKE_CPACK_COMMAND}
+            #-G ${PKG_GENERATOR}
+            -DCPACK_THREADS=3
+            #-DCPACK_GENERATOR=${PKG_GENERATOR}
+            -DCPACK_COMPONENTS_ALL="${PACKAGE_NAME_LOWER}"
+            -DCPACK_PACKAGE_FILE_NAME="${PACKAGE_NAME_LOWER}-${CPACK_PACKAGE_VERSION}-$<CONFIGURATION>"
+            #-DCPACK_COMPONENTS_GROUPING=IGNORE
+            #-DCPACK_PACKAGE_NAME="${PACKAGE_NAME_LOWER}"
+            #-DCPACK_PACKAGE_VENDOR="${COMPANY_NAME}"
+            #-DCPACK_PACKAGE_DESCRIPTION_SUMMARY="${PACKAGE_NAME} Installation."
+            #-DCPACK_PACKAGE_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+            #-DCPACK_PACKAGE_VERSION_MAJOR="${MAJOR_VERSION}"
+            #-DCPACK_PACKAGE_VERSION_MINOR="${MINOR_VERSION}"
+            #-DCPACK_PACKAGE_VERSION_PATCH="${PATCH_VERSION}"
+            #-DCPACK_PACKAGE_ICON="${CMAKE_CURRENT_LIST_DIR}/resources/solventer_logo.bmp"
+            #-DCPACK_RESOURCE_FILE_LICENSE="${CMAKE_CURRENT_LIST_DIR}/LICENSE.md"
+            #-DCPACK_PACKAGE_INSTALL_DIRECTORY="${COMPANY_NAME} ${PACKAGE_NAME}"
+            #-DCPACK_NSIS_MODIFY_PATH=ON
+            #-DCPACK_ARCHIVE_COMPONENT_INSTALL=ON
             COMMENT "Building package ${PACKAGE_NAME_LOWER}..."
             )
 
         # make sure package building is executed sequentially
-        set(INSTALL_PACKAGES ${PACKAGE_NAME_LOWER} ${INSTALL_PACKAGES} PARENT_SCOPE)
+        set(INSTALL_PACKAGES ${PACKAGE_NAME_LOWER}_pkg ${INSTALL_PACKAGES} PARENT_SCOPE)
     endif()
 endfunction()

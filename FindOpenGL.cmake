@@ -1,8 +1,8 @@
 find_package(PackageHandleStandardArgs)
 
-set(GL_HEADER_FILES GL/gl.h OpenGL/gl.h GLES2/gl2.h ES2/gl.h gl.h)
-set(GL_LIBRARY_NAMES opengl32 GL GLESv2 OpenGLES.tbd)
-set(GL_LIBRARY_NAMES64 opengl64 ${GL_LIBRARY_NAMES} GLESv2)
+set(GL_HEADER_FILES GL/gl.h OpenGL/gl.h GLES3/gl3.h GLES2/gl2.h ES2/gl.h gl.h)
+set(GL_LIBRARY_NAMES opengl32 GL GLESv3 GLESv2 OpenGLES.tbd)
+set(GL_LIBRARY_NAMES64 opengl64 ${GL_LIBRARY_NAMES})
 
 if(DEFINED ANDROID)
     set(GL_INCLUDE_HINT_PATH
