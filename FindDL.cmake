@@ -44,7 +44,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                 )
 endif()
 
-find_package_handle_standard_args(DL REQUIRED_VARS DL_INCLUDE_DIR DL_LIBRARY)
+find_package_handle_standard_args(DL REQUIRED_VARS DL_LIBRARY DL_INCLUDE_DIR)
 
 if(DL_FOUND AND NOT TARGET DL::Library)
         add_library(DL::Library UNKNOWN IMPORTED)

@@ -44,7 +44,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                 )
 endif()
 
-find_package_handle_standard_args(RT REQUIRED_VARS RT_INCLUDE_DIR RT_LIBRARY)
+find_package_handle_standard_args(RT REQUIRED_VARS RT_LIBRARY RT_INCLUDE_DIR)
 
 if(RT_FOUND AND NOT TARGET RT::Library)
         add_library(RT::Library UNKNOWN IMPORTED)
