@@ -1,6 +1,6 @@
 find_package(PackageHandleStandardArgs)
 
-set(RT_LIBRARIES rt)
+set(RT_LIBRARIES rt c)
 
 if(DEFINED ANDROID)
     set(RT_INCLUDE_HINT_PATH
