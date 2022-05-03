@@ -297,13 +297,13 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json")
 
     STRING(REGEX REPLACE "\"armeabi-v7a\":\"armeabi-v7a\"" "\"armeabi-v7a\" : \"arm-linux-androideabi\""
-    QT_ANDROID_ARCHITECTURES ${QT_ANDROID_ARCHITECTURES})
+    QT_ANDROID_ARCHITECTURES "${QT_ANDROID_ARCHITECTURES}")
     STRING(REGEX REPLACE "\"arm64-v8a\":\"arm64-v8a\"" "\"arm64-v8a\" : \"aarch64-linux-android\""
-    QT_ANDROID_ARCHITECTURES ${QT_ANDROID_ARCHITECTURES})
+    QT_ANDROID_ARCHITECTURES "${QT_ANDROID_ARCHITECTURES}")
     STRING(REGEX REPLACE "\"mips\":\"mips\"" "\"mips\" : \"mipsel-linux-android\""
-    QT_ANDROID_ARCHITECTURES ${QT_ANDROID_ARCHITECTURES})
+    QT_ANDROID_ARCHITECTURES "${QT_ANDROID_ARCHITECTURES}")
     STRING(REGEX REPLACE "\"mips64\":\"mips64\"" "\"mips64\" : \"mips64el-linux-android\""
-    QT_ANDROID_ARCHITECTURES ${QT_ANDROID_ARCHITECTURES})
+    QT_ANDROID_ARCHITECTURES "${QT_ANDROID_ARCHITECTURES}")
 
     configure_file(${QT_ANDROID_SOURCE_DIR}/android_deployment_settings.json.in
         ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json.in @ONLY)
