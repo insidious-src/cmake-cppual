@@ -158,10 +158,10 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
 
         # define commands that will be added before the APK target build commands,
         # to refresh the source package directory
-        set(QT_ANDROID_PRE_COMMANDS
-            ${QT_ANDROID_PRE_COMMANDS}
-            COMMAND ${CMAKE_COMMAND}
-            -E remove_directory ${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}) # clean the destination directory
+        #set(QT_ANDROID_PRE_COMMANDS
+        #    ${QT_ANDROID_PRE_COMMANDS}
+        #    COMMAND ${CMAKE_COMMAND}
+        #    -E remove_directory ${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}) # clean the destination directory
 
         set(QT_ANDROID_PRE_COMMANDS
             ${QT_ANDROID_PRE_COMMANDS}
@@ -294,7 +294,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     set(QT_DEPLOY_FILE_TEMPLATE
         "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json.in")
     set(QT_DEPLOY_FILE
-        "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}-qtdeploy.json")
+        "${QT_ANDROID_APP_BINARY_DIR}/qtdeploy.json")
 
     STRING(REGEX REPLACE "\"armeabi-v7a\":\"armeabi-v7a\"" "\"armeabi-v7a\" : \"arm-linux-androideabi\""
     QT_ANDROID_ARCHITECTURES "${QT_ANDROID_ARCHITECTURES}")
@@ -378,14 +378,14 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         ${INSTALL_OPTIONS}
         ${SIGN_OPTIONS}
         #POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        COMMAND ${CMAKE_COMMAND} -E copy
-        "${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
-        "${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        #COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        #COMMAND ${CMAKE_COMMAND} -E make_directory
+        #${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        #COMMAND ${CMAKE_COMMAND} -E copy_directory
+        #${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        #COMMAND ${CMAKE_COMMAND} -E copy
+        #"${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        #"${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
     )
 
 endmacro()
