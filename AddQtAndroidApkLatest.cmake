@@ -66,6 +66,10 @@ include(CMakeParseArguments)
 #
 macro(add_qt_android_apk TARGET SOURCE_TARGET)
 
+    if(ARG_PACKAGE_SOURCES)
+        set(QT_ANDROID_SOURCE_DIR ${ARG_PACKAGE_SOURCES})
+    endif()
+
     # parse the macro arguments
     cmake_parse_arguments(ARG "INSTALL" "NAME;VERSION_CODE;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD" "DEPENDS;KEYSTORE;APK_BUILD_TYPE" ${ARGN})
 
@@ -123,6 +127,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         endif()
     endif()
 
+    set(BUILD_GRADLE_TEMPLATE ${QT_ANDROID_SOURCE_DIR}/build.gradle.in)
     # check if the user provides a custom source package and its own manifest file
     if(ARG_PACKAGE_SOURCES)
         if(EXISTS "${ARG_PACKAGE_SOURCES}/AndroidManifest.xml")
@@ -132,12 +137,17 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
             # custom manifest template provided
             set(QT_ANDROID_MANIFEST_TEMPLATE "${ARG_PACKAGE_SOURCES}/AndroidManifest.xml.in")
         endif()
+
+        if (EXISTS "${ARG_PACKAGE_SOURCES}/build.gradle.in")
+            set(BUILD_GRADLE_TEMPLATE "${ARG_PACKAGE_SOURCES}/build.gradle.in")
+        endif ()
     endif()
 
     # generate a source package directory if none was provided, or if we need to configure a manifest file
     if(NOT QT_ANDROID_APP_PACKAGE_SOURCE_ROOT)
         # create our own configured package directory in build dir
-        set(QT_ANDROID_APP_PACKAGE_SOURCE_ROOT "${CMAKE_CURRENT_BINARY_DIR}/package")
+        set(QT_ANDROID_APP_PACKAGE_SOURCE_ROOT
+            "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_TARGET}-${ANDROID_ABI}/package")
 
         # create the manifest from the template file
         if(NOT QT_ANDROID_MANIFEST_TEMPLATE)
@@ -256,7 +266,15 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
     )
     # 3. Configure build.gradle to properly work with Android Studio import
     set(QT_ANDROID_NATIVE_API_LEVEL ${ANDROID_NATIVE_API_LEVEL})
-    configure_file(${QT_ANDROID_SOURCE_DIR}/build.gradle.in ${QT_ANDROID_APP_BINARY_DIR}/build.gradle @ONLY)
+    configure_file(${BUILD_GRADLE_TEMPLATE} ${QT_ANDROID_APP_BINARY_DIR}/build.gradle @ONLY)
+
+    configure_file(${QT_ANDROID_SOURCE_DIR}/android_deployment_settings.json.in
+            ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json.in @ONLY)
+
+    file(GENERATE
+         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json
+         INPUT ${CMAKE_CURRENT_BINARY_DIR}/android_deployment_settings.json.in
+         )
 
     # check if the apk must be signed
     if(ARG_KEYSTORE)

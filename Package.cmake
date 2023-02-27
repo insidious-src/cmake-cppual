@@ -180,7 +180,7 @@ function(install_package
 
     if(ANDROID)
 
-        include(AddQtAndroidApk REQUIRED)
+        include(AddQtAndroidApkLatest REQUIRED)
 
         if(ARG_DEPENDS)
             set(ANDROID_DEPENDS DEPENDS ${ARG_DEPENDS})

@@ -377,15 +377,15 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
         ${TARGET_LEVEL_OPTIONS}
         ${INSTALL_OPTIONS}
         ${SIGN_OPTIONS}
-        #POST_BUILD
-        #COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        #COMMAND ${CMAKE_COMMAND} -E make_directory
-        #${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        #COMMAND ${CMAKE_COMMAND} -E copy_directory
-        #${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
-        #COMMAND ${CMAKE_COMMAND} -E copy
-        #"${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
-        #"${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${QT_ANDROID_APP_BINARY_DIR}/build ${CMAKE_CURRENT_BINARY_DIR}/android-build/build
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${QT_ANDROID_APP_BINARY_DIR}/build/outputs/apk/${LOWER_BUILD_TYPE}/${SOURCE_TARGET}-${ANDROID_ABI}-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
+        "${CMAKE_CURRENT_BINARY_DIR}/android-build/build/outputs/apk/${LOWER_BUILD_TYPE}/android-build-${LOWER_BUILD_TYPE}${ANDROID_SIGN}.apk"
     )
 
 endmacro()
