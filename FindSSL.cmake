@@ -1,11 +1,7 @@
 find_package(PackageHandleStandardArgs)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll" ".DLL")
-endif()
-
-set(CRYPTO_LIBRARIES crypto_1_1 crypto-1_1-x64 crypto-1_1 crypto)
-set(SSL_LIBRARIES ssl_1_1 ssl-1_1-x64 ssl-1_1 ssl)
+set(CRYPTO_LIBRARIES crypto-1_1 crypto-1_1-x64 crypto_1_1 crypto-1_1 crypto crypto-3 crypto-3-x64)
+set(SSL_LIBRARIES ssl-1_1-x64 ssl_1_1 ssl-1_1 ssl ssl-3 ssl-3-x64)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(SSL_DIR "/usr/${TOOLCHAIN_PREFIX}")

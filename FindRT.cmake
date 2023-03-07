@@ -1,6 +1,6 @@
 find_package(PackageHandleStandardArgs)
 
-set(RT_LIBRARIES rt c)
+set(RT_LIBRARIES rt c kernel32)
 
 if(DEFINED ANDROID)
     set(RT_INCLUDE_HINT_PATH
@@ -17,7 +17,7 @@ endif()
 
 find_path(RT_INCLUDE_DIR
         NAMES
-                sys/mman.h
+                sys/mman.h Windows.h windows.h
         HINTS
                 ${RT_INCLUDE_HINT_PATH}
         PATH_SUFFIXES

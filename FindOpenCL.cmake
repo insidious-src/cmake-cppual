@@ -10,6 +10,9 @@ if(DEFINED ANDROID)
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/")
     set(OPENCL_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(OPENCL_INCLUDE_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
+    set(OPENCL_LIBRARY_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
 else()
     set(OPENCL_INCLUDE_HINT_PATH "/usr")
     set(OPENCL_LIBRARY_HINT_PATH "/usr")
@@ -47,6 +50,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         ENV ATISTREAMSDKROOT
       PATH_SUFFIXES
         "AMD APP/lib/x86"
+        bin
         lib32
         lib
         lib/x86
@@ -66,6 +70,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         ENV ATISTREAMSDKROOT
       PATH_SUFFIXES
         "AMD APP/lib/x86_64"
+        bin
         lib
         lib64
         lib/x86_64

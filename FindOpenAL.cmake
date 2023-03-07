@@ -1,14 +1,17 @@
 find_package(PackageHandleStandardArgs)
 
 set(HEADER_FILES    AL/al.h OpenAL/al.h)
-set(LIBRARY_NAMES   openal OpenAL al OpenAL32 soft_oal)
-set(LIBRARY_NAMES64 openal OpenAL al OpenAL64 OpenAL32 soft_oal)
+set(LIBRARY_NAMES   OpenAL32 soft_oal openal OpenAL al)
+set(LIBRARY_NAMES64 OpenAL64 OpenAL32 soft_oal openal OpenAL al)
 
 if(DEFINED ANDROID)
     set(OPENAL_INCLUDE_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/")
     set(OPENAL_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(RT_INCLUDE_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
+    set(RT_LIBRARY_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
 else()
     set(OPENAL_INCLUDE_HINT_PATH "/usr")
     set(OPENAL_LIBRARY_HINT_PATH "/usr")
@@ -37,6 +40,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
             ENV OPENALDIR
         PATH_SUFFIXES bin lib32 lib lib/Win32 libs/Win32
         PATHS
+        ${OPENAL_LIBRARY_HINT_PATH}
         ${CMAKE_FIND_ROOT_PATH}
         ${CMAKE_SOURCE_DIR}
         ~/Library/Frameworks
@@ -55,6 +59,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             ENV OPENALDIR
         PATH_SUFFIXES bin lib lib64 lib/Win64 libs/Win64
         PATHS
+        ${OPENAL_LIBRARY_HINT_PATH}
         ${CMAKE_FIND_ROOT_PATH}
         ${CMAKE_SOURCE_DIR}
         ~/Library/Frameworks
