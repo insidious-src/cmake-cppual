@@ -266,10 +266,33 @@ function(install_package
                             set(QWindowsPlugin
                                 "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/platforms/qwindows.dll")
 
+                            set(QSvgPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/iconengines/qsvgicon.dll")
+
+                            set(QSvgFormatPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qsvg.dll")
+
+                            set(QGifFormatPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qgif.dll")
+
+                            set(QIcoFormatPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qico.dll")
+
+                            set(QJpegFormatPlugin
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qjpeg.dll")
+
+                            set(JpegLibrary
+                                "/usr/${TOOLCHAIN_PREFIX}/bin/libjpeg-8.dll")
+
                             #set(TOOLCHAIN_BIN_DIR "/usr/${TOOLCHAIN_PREFIX}/bin")
 
                             install_file(${QWindowsPlugin} platforms ${PACKAGE_NAME_LOWER})
-
+                            install_file(${JpegLibrary} . ${PACKAGE_NAME_LOWER})
+                            install_file(${QSvgPlugin} iconengines ${PACKAGE_NAME_LOWER})
+                            install_file(${QSvgFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
+                            install_file(${QGifFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
+                            install_file(${QIcoFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
+                            install_file(${QJpegFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
 
                             #install_file("${TOOLCHAIN_BIN_DIR}/Qt5Svg.dll" . ${PACKAGE_NAME_LOWER})
                             #install_file("${TOOLCHAIN_BIN_DIR}/libgcc_s_dw2-1.dll" . ${PACKAGE_NAME_LOWER})
