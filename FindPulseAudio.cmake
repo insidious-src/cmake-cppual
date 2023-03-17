@@ -61,6 +61,7 @@ find_library(PulseAudio_LIBRARIES NAMES pulse libpulse
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
    PATH_SUFFIXES
+    lib/x86_64-linux-gnu
     lib/aarch64-linux-gnu
    )
 
@@ -69,6 +70,7 @@ find_library(PulseAudio_MAINLOOP_LIBRARY NAMES pulse-mainloop pulse-mainloop-gli
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
    PATH_SUFFIXES
+    lib/x86_64-linux-gnu
     lib/aarch64-linux-gnu
    )
 

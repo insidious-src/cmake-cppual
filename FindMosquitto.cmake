@@ -48,14 +48,14 @@ else()
                         PATHS "C:/Program Files/mosquitto"
                         "C:/Program Files (x86)/mosquitto"
                         "/usr/x86_64-w64-mingw32"
-                        PATH_SUFFIXES bin lib64 lib lib/aarch64-linux-gnu
+                        PATH_SUFFIXES bin lib64 lib lib/x86_64-linux-gnu lib/aarch64-linux-gnu
                         )
             find_library(MOSQUITTO_LIBRARY_CPP
                     NAMES mosquittopp
                     PATHS "C:/Program Files/mosquitto"
                     "C:/Program Files (x86)/mosquitto"
                     "/usr/x86_64-w64-mingw32"
-                    PATH_SUFFIXES bin lib64 lib lib/aarch64-linux-gnu
+                    PATH_SUFFIXES bin lib64 lib lib/x86_64-linux-gnu lib/aarch64-linux-gnu
                     )
     endif()
 endif()

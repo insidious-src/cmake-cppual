@@ -20,7 +20,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(GLEW_LIBRARY
                 NAMES ${LIBRARY_NAMES64}
-                PATH_SUFFIXES bin lib lib64 lib/aarch64-linux-gnu
+                PATH_SUFFIXES bin lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
                 PATHS
                     ${CMAKE_FIND_ROOT_PATH}
                     ${CMAKE_SOURCE_DIR}

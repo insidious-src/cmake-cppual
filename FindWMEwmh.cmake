@@ -30,7 +30,7 @@ find_path(WMEWMH_INCLUDE_DIR
                 NAMES
                         ${WMEWMH_LIBRARY_NAMES}
                 PATH_SUFFIXES
-                        lib lib64
+                        lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
                 )
     endif()
 

@@ -102,7 +102,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             PATHS
                     ${SSL_DIR}
             PATH_SUFFIXES
-                    bin lib lib64 lib/aarch64-linux-gnu
+                    bin lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
             NO_DEFAULT_PATH
             )
 
@@ -112,7 +112,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             PATHS
                     ${SSL_DIR}
             PATH_SUFFIXES
-                    bin lib lib64 lib/aarch64-linux-gnu
+                    bin lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
             NO_DEFAULT_PATH
             )
 endif()

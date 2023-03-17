@@ -40,7 +40,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                 HINTS
                         ${RT_LIBRARY_HINT_PATH}
                 PATH_SUFFIXES
-                        bin lib lib64 lib/aarch64-linux-gnu
+                        bin lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
                 )
 endif()
 

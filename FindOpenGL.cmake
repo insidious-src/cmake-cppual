@@ -47,6 +47,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                         bin
                         lib
                         lib64
+                        lib/x86_64-linux-gnu
                         lib/aarch64-linux-gnu
                         System/Library/Frameworks/OpenGLES.framework
                         System/Library/Frameworks/OpenGL.framework/Libraries

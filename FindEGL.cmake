@@ -65,6 +65,7 @@ if(NOT WIN32)
             PATH_SUFFIXES
                 lib
                 lib64
+                lib/x86_64-linux-gnu
                 lib/aarch64-linux-gnu
                 System/Library/Frameworks/AGL.framework
             NO_DEFAULT_PATH
