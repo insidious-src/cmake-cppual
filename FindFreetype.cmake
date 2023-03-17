@@ -57,6 +57,7 @@ if(NOT FREETYPE_LIBRARY)
       ENV FREETYPE_DIR
     PATH_SUFFIXES
       lib
+      lib/aarch64-linux-gnu
   )
   find_library(FREETYPE_LIBRARY_DEBUG
     NAMES
@@ -72,6 +73,7 @@ if(NOT FREETYPE_LIBRARY)
       ENV FREETYPE_DIR
     PATH_SUFFIXES
       lib
+      lib/aarch64-linux-gnu
   )
   include(SelectLibraryConfigurations)
   select_library_configurations(FREETYPE)

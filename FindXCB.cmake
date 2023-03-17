@@ -201,8 +201,15 @@ macro(_XCB_HANDLE_COMPONENT _comp)
         set(_lib "xcb-xkb")
     endif()
 
-    find_path(XCB_${_comp}_INCLUDE_DIR NAMES ${_header} HINTS ${PKG_XCB_INCLUDE_DIRS})
-    find_library(XCB_${_comp}_LIBRARY NAMES ${_lib} HINTS ${PKG_XCB_LIBRARY_DIRS})
+    find_path(XCB_${_comp}_INCLUDE_DIR
+        NAMES ${_header}
+        HINTS ${PKG_XCB_INCLUDE_DIRS})
+
+    find_library(XCB_${_comp}_LIBRARY
+        NAMES ${_lib}
+        HINTS ${PKG_XCB_LIBRARY_DIRS}
+        PATH_SUFFIXES lib/aarch64-linux-gnu
+    )
 
     if(XCB_${_comp}_INCLUDE_DIR AND XCB_${_comp}_LIBRARY)
         list(APPEND XCB_INCLUDE_DIRS ${XCB_${_comp}_INCLUDE_DIR})

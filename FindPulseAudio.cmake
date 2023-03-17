@@ -60,12 +60,16 @@ find_library(PulseAudio_LIBRARIES NAMES pulse libpulse
    HINTS
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
+   PATH_SUFFIXES
+    lib/aarch64-linux-gnu
    )
 
 find_library(PulseAudio_MAINLOOP_LIBRARY NAMES pulse-mainloop pulse-mainloop-glib libpulse-mainloop-glib
    HINTS
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
+   PATH_SUFFIXES
+    lib/aarch64-linux-gnu
    )
 
 # Store the version number in the cache, so we don't have to search every time again:

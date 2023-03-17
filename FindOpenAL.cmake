@@ -57,7 +57,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         HINTS
             ${OPENAL_LIBRARY_HINT_PATH}
             ENV OPENALDIR
-        PATH_SUFFIXES bin lib lib64 lib/Win64 libs/Win64
+        PATH_SUFFIXES bin lib lib64 lib/aarch64-linux-gnu lib/Win64 libs/Win64
         PATHS
         ${OPENAL_LIBRARY_HINT_PATH}
         ${CMAKE_FIND_ROOT_PATH}

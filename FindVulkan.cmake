@@ -74,6 +74,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         "AMD APP/lib/x86_64"
         lib
         lib64
+        lib/aarch64-linux-gnu
         lib/x86_64
         lib/x64
       NO_DEFAULT_PATH

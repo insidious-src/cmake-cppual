@@ -30,7 +30,7 @@ find_path(X11_INCLUDE_DIR
                 NAMES
                         ${X11_LIBRARY_NAMES}
                 PATH_SUFFIXES
-                        lib lib64
+                        lib lib64 lib/aarch64-linux-gnu
                 )
     endif()
 

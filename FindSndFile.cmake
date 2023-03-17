@@ -33,7 +33,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
     find_library(SNDFILE_LIBRARY
             NAMES ${LIBRARY_NAMES}
-            PATH_SUFFIXES bin lib lib64
+            PATH_SUFFIXES bin lib lib64 lib/aarch64-linux-gnu
             PATHS
             ${SNDFILE_LIBRARY_HINT_PATH}
             ${CMAKE_FIND_ROOT_PATH}

@@ -34,7 +34,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(WM_LIBRARY
                         NAMES ${LIBRARY_NAMES}
                         HINTS ${WM_LIBRARY_HINT_PATH}
-                        PATH_SUFFIXES lib lib64
+                        PATH_SUFFIXES lib lib64 lib/aarch64-linux-gnu
                         )
 endif()
 

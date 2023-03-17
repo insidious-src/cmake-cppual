@@ -28,7 +28,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
                      PATHS ${CMAKE_FIND_ROOT_PATH}
-                     PATH_SUFFIXES lib lib64
+                     PATH_SUFFIXES lib lib64 lib/aarch64-linux-gnu
                      NO_DEFAULT_PATH
                      )
 endif()

@@ -1,6 +1,6 @@
 find_package(PackageHandleStandardArgs)
 
-set(HEADER_FILES  mosquitto.h)
+set(HEADER_FILES  mosquitto.h mosquitto_plugin.h mosquitto/mosquitto_plugin.h)
 set(LIBRARY_NAMES mosquitto)
 
 if(ANDROID)
@@ -48,19 +48,20 @@ else()
                         PATHS "C:/Program Files/mosquitto"
                         "C:/Program Files (x86)/mosquitto"
                         "/usr/x86_64-w64-mingw32"
-                        PATH_SUFFIXES bin lib64 lib
+                        PATH_SUFFIXES bin lib64 lib lib/aarch64-linux-gnu
                         )
             find_library(MOSQUITTO_LIBRARY_CPP
                     NAMES mosquittopp
                     PATHS "C:/Program Files/mosquitto"
                     "C:/Program Files (x86)/mosquitto"
                     "/usr/x86_64-w64-mingw32"
-                    PATH_SUFFIXES bin lib64 lib
+                    PATH_SUFFIXES bin lib64 lib lib/aarch64-linux-gnu
                     )
     endif()
 endif()
 
-find_package_handle_standard_args(Mosquitto REQUIRED_VARS MOSQUITTO_LIBRARY MOSQUITTO_LIBRARY_CPP MOSQUITTO_INCLUDE_DIRS)
+#find_package_handle_standard_args(Mosquitto REQUIRED_VARS MOSQUITTO_LIBRARY MOSQUITTO_LIBRARY_CPP MOSQUITTO_INCLUDE_DIRS)
+find_package_handle_standard_args(Mosquitto REQUIRED_VARS MOSQUITTO_LIBRARY MOSQUITTO_INCLUDE_DIRS)
 
 if(MOSQUITTO_FOUND AND NOT TARGET Mosquitto::Library)
         add_library(Mosquitto::Library UNKNOWN IMPORTED)

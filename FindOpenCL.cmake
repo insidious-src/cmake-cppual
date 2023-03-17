@@ -73,6 +73,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         bin
         lib
         lib64
+        lib/aarch64-linux-gnu
         lib/x86_64
         lib/x64
         OpenCL/common/lib/x64
