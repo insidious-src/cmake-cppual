@@ -1,7 +1,7 @@
 find_package(PackageHandleStandardArgs)
 
 set(HEADER_FILES  mosquitto.h mosquitto_plugin.h mosquitto/mosquitto_plugin.h)
-set(LIBRARY_NAMES mosquitto)
+set(LIBRARY_NAMES mosquitto mosquitto.so.1 libmosquitto.so.1)
 
 if(ANDROID)
     find_path(MOSQUITTO_INCLUDE_DIRS
