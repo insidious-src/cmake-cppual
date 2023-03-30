@@ -37,6 +37,9 @@ set(SYSTEM_LIBS_SKIP
     "dxgi.dll"
     "SETUPAPI.dll"
     "d3d11.dll"
+    "IMM32.dll"
+    "OLEAUT32.dll"
+    "WTSAPI32.dll"
     )
 
 #separate_arguments(SYSTEM_LIBS_SKIP)
@@ -96,6 +99,69 @@ function(install_target TARGET DIRECTORY MODULE)
         )
 endfunction()
 
+#function(get_dependencies TARGET OUTPUT_VAR)
+
+#    # set the list of dependant libraries
+#    set(OUTPUT_DEPS "")
+#    set(LIB_PATH "")
+
+#    if(TARGET ${TARGET} AND NOT ANDROID)
+#        # item is a CMake target, extract the library path
+#        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#            get_property(LIB_PATH TARGET ${TARGET} PROPERTY DEBUG_LOCATION)
+#        else()
+#            get_property(LIB_PATH TARGET ${TARGET} PROPERTY LOCATION)
+#        endif()
+#    elseif(NOT TARGET ${TARGET} AND NOT ANDROID)
+#        set(LIB_PATH ${TARGET})
+#    endif()
+
+#    # extract dependencies ignoring the system ones
+#    get_prerequisites(${LIB_PATH} PREREQUISITES 0 1
+#        "${CMAKE_CURRENT_BINARY_DIR}"
+#        "/usr/${TOOLCHAIN_PREFIX}/bin")
+
+#    foreach(PREREQ_LIB ${PREREQUISITES})
+#        get_filename_component(REALPATH_LIB "${PREREQ_LIB}" REALPATH)
+
+#        if (TOOLCHAIN_PREFIX)
+#            string(REPLACE ".dll.a" ".dll"
+#                REALPATH_LIB ${REALPATH_LIB})
+
+#            string(REPLACE "${CMAKE_SOURCE_DIR}" "/usr/${TOOLCHAIN_PREFIX}/bin"
+#                REALPATH_LIB ${REALPATH_LIB})
+
+#            list(APPEND OUTPUT_DEPS ${REALPATH_LIB})
+#        elseif(NOT ${REALPATH_LIB} STREQUAL "${CMAKE_SOURCE_DIR}/${PREREQ_LIB}")
+#            list(APPEND OUTPUT_DEPS ${REALPATH_LIB})
+#        endif()
+#    endforeach()
+
+#    list(APPEND OUTPUT_DEPS ${TARGET})
+
+#    # remove duplicates
+#    list(REMOVE_DUPLICATES OUTPUT_DEPS)
+
+#    # remove shared targets
+
+#    # unix format
+#    list(REMOVE_ITEM OUTPUT_DEPS "${CMAKE_SHARED_LIBRARY_PREFIX}${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+#    # windows format on linux
+#    list(REMOVE_ITEM OUTPUT_DEPS "${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+#    # windows format on linux & unix format
+#    list(REMOVE_ITEM OUTPUT_DEPS
+#        "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+#    list(REMOVE_ITEM OUTPUT_DEPS
+#        "/usr/${TOOLCHAIN_PREFIX}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+#    # remove system libraries
+#    foreach(LIB_SKIP ${SYSTEM_LIBS_SKIP})
+#        list(REMOVE_ITEM OUTPUT_DEPS "/usr/${TOOLCHAIN_PREFIX}/bin/${LIB_SKIP}")
+#    endforeach()
+
+#    set(OUTPUT_VAR ${OUTPUT_DEPS} PARENT_SCOPE)
+#endfunction()
+
 function(install_package
         PACKAGE_NAME
         COMPANY_NAME
@@ -135,6 +201,8 @@ function(install_package
                     "/usr/${TOOLCHAIN_PREFIX}/bin")
 
                 foreach(PREREQ_LIB ${PREREQUISITES})
+
+                    get_filename_component(ABSPATH_LIB "${PREREQ_LIB}" ABSOLUTE)
                     get_filename_component(REALPATH_LIB "${PREREQ_LIB}" REALPATH)
 
                     if (TOOLCHAIN_PREFIX)
@@ -148,6 +216,30 @@ function(install_package
                     elseif(NOT ${REALPATH_LIB} STREQUAL "${CMAKE_SOURCE_DIR}/${PREREQ_LIB}")
                         list(APPEND DEPENDENCIES ${REALPATH_LIB})
                     endif()
+
+                    while(UNIX AND IS_SYMLINK "${ABSPATH_LIB}")
+                      #Grab path to directory containing the current symlink.
+                      get_filename_component(SYM_PATH "${ABSPATH_LIB}" DIRECTORY)
+
+                      #Resolve one level of symlink, store resolved path back in lib.
+                      execute_process(COMMAND readlink "${ABSPATH_LIB}"
+                                      RESULT_VARIABLE ErrMsg
+                                      OUTPUT_VARIABLE ABSPATH_LIB
+                                      OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+                      #Check to make sure readlink executed correctly.
+                      if(ErrMsg AND (NOT "${ErrMsg}" EQUAL "0"))
+                        message(FATAL_ERROR "Error calling readlink on library.")
+                      endif()
+
+                      #Convert resolved path to an absolute path, if it isn't one already.
+                      if(NOT IS_ABSOLUTE "${ABSPATH_LIB}")
+                        set(ABSPATH_LIB "${SYM_PATH}/${ABSPATH_LIB}")
+                      endif()
+
+                      #Append resolved path to symlink resolution list.
+                      list(APPEND DEPENDENCIES "${ABSPATH_LIB}")
+                    endwhile()
 
                 endforeach()
             endif()
@@ -219,6 +311,10 @@ function(install_package
 
     elseif(IOS_PLATFORM)
 
+        if(ARG_PACKAGE_SOURCES)
+            set(MACOSX_PACKAGE_SOURCES MACOSX_BUNDLE_INFO_PLIST "${ARG_PACKAGE_SOURCES}/ios-info.plist.in")
+        endif()
+
         set_target_properties(${TARGET} PROPERTIES
             MACOSX_BUNDLE TRUE
             #XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO
@@ -226,7 +322,7 @@ function(install_package
             XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "6GTJ292YX4"
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.${COMPANY_NAME_LOWER}.${PACKAGE_NAME_LOWER}"
             XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.${COMPANY_NAME_LOWER}.${PACKAGE_NAME_LOWER}"
-            #MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ios-info.plist.in"
+            ${MACOSX_PACKAGE_SOURCES}
             )
 
         message(STATUS "Preparing package ${PACKAGE_NAME_LOWER}.app...")
@@ -258,54 +354,137 @@ function(install_package
                 if(TARGET ${LIB})
                     install_shared(${LIB} . ${PACKAGE_NAME_LOWER})
                 else()
-                    if(${LIB} MATCHES "Qt5Gui${CMAKE_SHARED_LIBRARY_SUFFIX}")
+                    if(${LIB} MATCHES "Qt5Gui${CMAKE_SHARED_LIBRARY_SUFFIX}" OR
+                       ${LIB} MATCHES "${CMAKE_SHARED_LIBRARY_PREFIX}Qt5Gui${CMAKE_SHARED_LIBRARY_SUFFIX}")
+                        install_file(${LIB} . ${PACKAGE_NAME_LOWER})
+
+                        set(QPlatformPlugins "")
+                        set(QIconEnginesPlugins "")
+                        set(QImageFormatsPlugins "")
+                        set(QPluginsDeps "")
+
                         if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-                            install_file(${LIB} . ${PACKAGE_NAME_LOWER})
 
                             #install_shared(Qt5::QWindowsIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
-                            set(QWindowsPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/platforms/qwindows.dll")
 
-                            set(QSvgPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/iconengines/qsvgicon.dll")
+                            set(QPlatformPlugins
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/platforms/qwindows.dll"
+                            )
 
-                            set(QSvgFormatPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qsvg.dll")
+                            set(QIconEnginesPlugins
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/iconengines/qsvgicon.dll"
+                                )
 
-                            set(QGifFormatPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qgif.dll")
-
-                            set(QIcoFormatPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qico.dll")
-
-                            set(QJpegFormatPlugin
-                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qjpeg.dll")
-
-                            set(JpegLibrary
-                                "/usr/${TOOLCHAIN_PREFIX}/bin/libjpeg-8.dll")
+                            set(QImageFormatsPlugins
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qsvg.dll"
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qgif.dll"
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qico.dll"
+                                "/usr/${TOOLCHAIN_PREFIX}/lib/qt/plugins/imageformats/qjpeg.dll"
+                                )
 
                             #set(TOOLCHAIN_BIN_DIR "/usr/${TOOLCHAIN_PREFIX}/bin")
 
-                            install_file(${QWindowsPlugin} platforms ${PACKAGE_NAME_LOWER})
-                            install_file(${JpegLibrary} . ${PACKAGE_NAME_LOWER})
-                            install_file(${QSvgPlugin} iconengines ${PACKAGE_NAME_LOWER})
-                            install_file(${QSvgFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
-                            install_file(${QGifFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
-                            install_file(${QIcoFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
-                            install_file(${QJpegFormatPlugin} imageformats ${PACKAGE_NAME_LOWER})
-
-                            #install_file("${TOOLCHAIN_BIN_DIR}/Qt5Svg.dll" . ${PACKAGE_NAME_LOWER})
-                            #install_file("${TOOLCHAIN_BIN_DIR}/libgcc_s_dw2-1.dll" . ${PACKAGE_NAME_LOWER})
-
-                            #install_file("${TOOLCHAIN_BIN_DIR}/libssl-1_1-x64.dll" . ${PACKAGE_NAME_LOWER})
-                            #install_file("${TOOLCHAIN_BIN_DIR}/libcrypto-1_1-x64.dll" . ${PACKAGE_NAME_LOWER})
-
                         elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
                             install_shared(Qt5::QXcbIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
                             #install_shared(Qt5::QWaylandIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
+
+                            set(QIconEnginesPlugins
+                                "/usr/lib/qt/plugins/iconengines/libqsvgicon.so"
+                                )
+
+                            set(QImageFormatsPlugins
+                                "/usr/lib/qt/plugins/imageformats/libqsvg.so"
+                                "/usr/lib/qt/plugins/imageformats/libqgif.so"
+                                "/usr/lib/qt/plugins/imageformats/libqico.so"
+                                "/usr/lib/qt/plugins/imageformats/libqjpeg.so"
+                                )
+
                         else()
                             install_shared(Qt5::QXcbIntegrationPlugin platforms ${PACKAGE_NAME_LOWER})
                         endif()
+
+                        set(QGuiPlugins
+                            ${QPlatformPlugins}
+                            ${QIconEnginesPlugins}
+                            ${QImageFormatsPlugins}
+                            )
+
+                        # extract dependencies ignoring the system ones
+                        foreach(GUI_PLUGIN_LIB ${QGuiPlugins})
+                            get_prerequisites(${GUI_PLUGIN_LIB} PREREQUISITES_PLUGINS 0 1
+                                "${CMAKE_CURRENT_BINARY_DIR}"
+                                "/usr/${TOOLCHAIN_PREFIX}/bin")
+
+                            foreach(PREREQ_PLUGIN_LIB ${PREREQUISITES_PLUGINS})
+                                get_filename_component(ABSPATH_PLUGIN_LIB "${PREREQ_PLUGIN_LIB}" ABSOLUTE)
+                                get_filename_component(REALPATH_PLUGIN_LIB "${PREREQ_PLUGIN_LIB}" REALPATH)
+
+                                if (TOOLCHAIN_PREFIX)
+                                    string(REPLACE ".dll.a" ".dll"
+                                        REALPATH_PLUGIN_LIB ${REALPATH_PLUGIN_LIB})
+
+                                    string(REPLACE "${CMAKE_SOURCE_DIR}" "/usr/${TOOLCHAIN_PREFIX}/bin"
+                                        REALPATH_PLUGIN_LIB ${REALPATH_PLUGIN_LIB})
+
+                                    list(APPEND QPluginsDeps ${REALPATH_PLUGIN_LIB})
+                                elseif(NOT ${REALPATH_PLUGIN_LIB} STREQUAL "${CMAKE_SOURCE_DIR}/${REALPATH_PLUGIN_LIB}")
+                                    list(APPEND QPluginsDeps ${REALPATH_PLUGIN_LIB})
+                                endif()
+
+                                while(UNIX AND IS_SYMLINK "${ABSPATH_PLUGIN_LIB}")
+                                  #Grab path to directory containing the current symlink.
+                                  get_filename_component(SYM_PLUGIN_PATH "${ABSPATH_PLUGIN_LIB}" DIRECTORY)
+
+                                  #Resolve one level of symlink, store resolved path back in lib.
+                                  execute_process(COMMAND readlink "${ABSPATH_PLUGIN_LIB}"
+                                                  RESULT_VARIABLE ErrMsg
+                                                  OUTPUT_VARIABLE ABSPATH_PLUGIN_LIB
+                                                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+                                  #Check to make sure readlink executed correctly.
+                                  if(ErrMsg AND (NOT "${ErrMsg}" EQUAL "0"))
+                                    message(FATAL_ERROR "Error calling readlink on library.")
+                                  endif()
+
+                                  #Convert resolved path to an absolute path, if it isn't one already.
+                                  if(NOT IS_ABSOLUTE "${ABSPATH_PLUGIN_LIB}")
+                                    set(ABSPATH_PLUGIN_LIB "${SYM_PLUGIN_PATH}/${ABSPATH_PLUGIN_LIB}")
+                                  endif()
+
+                                  #Append resolved path to symlink resolution list.
+                                  list(APPEND QPluginsDeps "${ABSPATH_PLUGIN_LIB}")
+                                endwhile()
+                            endforeach()
+                        endforeach()
+
+                        # remove duplicates
+                        list(REMOVE_DUPLICATES QPluginsDeps)
+
+                        foreach(DEP_LIB_SKIP ${DEPENDENCIES})
+                            list(REMOVE_ITEM QPluginsDeps "${DEP_LIB_SKIP}")
+                        endforeach()
+
+                        # remove system libraries
+                        foreach(DEP_LIB_SKIP ${SYSTEM_LIBS_SKIP})
+                            list(REMOVE_ITEM QPluginsDeps "/usr/${TOOLCHAIN_PREFIX}/bin/${DEP_LIB_SKIP}")
+                        endforeach()
+
+                        foreach(PLATFORM_LIB ${QPlatformPlugins})
+                            install_file(${PLATFORM_LIB} platforms ${PACKAGE_NAME_LOWER})
+                        endforeach()
+
+                        foreach(ICON_LIB ${QIconEnginesPlugins})
+                            install_file(${ICON_LIB} iconengines ${PACKAGE_NAME_LOWER})
+                        endforeach()
+
+                        foreach(IMG_FMT_LIB ${QImageFormatsPlugins})
+                            install_file(${IMG_FMT_LIB} imageformats ${PACKAGE_NAME_LOWER})
+                        endforeach()
+
+                        foreach(PLUGIN_DEP ${QPluginsDeps})
+                            install_file(${PLUGIN_DEP} . ${PACKAGE_NAME_LOWER})
+                        endforeach()
                     else()
                         install_file(${LIB} . ${PACKAGE_NAME_LOWER})
                     endif()
@@ -365,7 +544,7 @@ function(install_package
             -DCPACK_THREADS=3
             #-DCPACK_GENERATOR=${PKG_GENERATOR}
             -DCPACK_COMPONENTS_ALL="${PACKAGE_NAME_LOWER}"
-            -DCPACK_PACKAGE_FILE_NAME="${PACKAGE_NAME_LOWER}-${CPACK_PACKAGE_VERSION}-$<CONFIGURATION>"
+            -DCPACK_PACKAGE_FILE_NAME="${PACKAGE_NAME_LOWER}-${CPACK_PACKAGE_VERSION}-$<CONFIGURATION>-${CMAKE_SYSTEM_PROCESSOR}"
             #-DCPACK_COMPONENTS_GROUPING=IGNORE
             #-DCPACK_PACKAGE_NAME="${PACKAGE_NAME_LOWER}"
             #-DCPACK_PACKAGE_VENDOR="${COMPANY_NAME}"
