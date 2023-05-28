@@ -23,7 +23,7 @@ find_path(SNDFILE_INCLUDE_DIR
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     find_library(SNDFILE_LIBRARY
             NAMES ${LIBRARY_NAMES}
-            PATH_SUFFIXES bin lib32 lib
+            PATH_SUFFIXES bin lib32 lib lib/arm-linux-gnueabihf
             PATHS
             ${SNDFILE_LIBRARY_HINT_PATH}
             ${CMAKE_FIND_ROOT_PATH}

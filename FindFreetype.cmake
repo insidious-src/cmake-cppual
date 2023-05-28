@@ -59,6 +59,7 @@ if(NOT FREETYPE_LIBRARY)
       lib
       lib/x86_64-linux-gnu
       lib/aarch64-linux-gnu
+      lib/arm-linux-gnueabihf
   )
   find_library(FREETYPE_LIBRARY_DEBUG
     NAMES
@@ -76,6 +77,7 @@ if(NOT FREETYPE_LIBRARY)
       lib
       lib/x86_64-linux-gnu
       lib/aarch64-linux-gnu
+      lib/arm-linux-gnueabihf
   )
   include(SelectLibraryConfigurations)
   select_library_configurations(FREETYPE)

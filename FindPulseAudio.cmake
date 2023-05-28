@@ -56,22 +56,26 @@ find_path(PulseAudio_INCLUDE_DIRS pulse/pulseaudio.h
    ${PC_PulseAudio_INCLUDE_DIRS}
    )
 
-find_library(PulseAudio_LIBRARIES NAMES pulse libpulse
+find_library(PulseAudio_LIBRARIES
+   NAMES pulse libpulse
    HINTS
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
    PATH_SUFFIXES
     lib/x86_64-linux-gnu
     lib/aarch64-linux-gnu
+    lib/arm-linux-gnueabihf
    )
 
-find_library(PulseAudio_MAINLOOP_LIBRARY NAMES pulse-mainloop pulse-mainloop-glib libpulse-mainloop-glib
+find_library(PulseAudio_MAINLOOP_LIBRARY
+   NAMES pulse-mainloop pulse-mainloop-glib libpulse-mainloop-glib
    HINTS
    ${PC_PulseAudio_LIBDIR}
    ${PC_PulseAudio_LIBRARY_DIRS}
    PATH_SUFFIXES
     lib/x86_64-linux-gnu
     lib/aarch64-linux-gnu
+    lib/arm-linux-gnueabihf
    )
 
 # Store the version number in the cache, so we don't have to search every time again:

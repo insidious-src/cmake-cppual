@@ -55,6 +55,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         lib
         lib/x86
         lib/Win32
+        lib/arm-linux-gnueabihf
         OpenCL/common/lib/Win32
       NO_DEFAULT_PATH
       )

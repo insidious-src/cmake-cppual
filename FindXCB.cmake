@@ -208,7 +208,7 @@ macro(_XCB_HANDLE_COMPONENT _comp)
     find_library(XCB_${_comp}_LIBRARY
         NAMES ${_lib}
         HINTS ${PKG_XCB_LIBRARY_DIRS}
-        PATH_SUFFIXES lib/x86_64-linux-gnu lib/aarch64-linux-gnu
+        PATH_SUFFIXES lib/x86_64-linux-gnu lib/aarch64-linux-gnu lib/arm-linux-gnueabihf
     )
 
     if(XCB_${_comp}_INCLUDE_DIR AND XCB_${_comp}_LIBRARY)

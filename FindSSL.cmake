@@ -82,7 +82,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
             PATHS
                     ${SSL_DIR}
             PATH_SUFFIXES
-                    bin lib32 lib
+                    bin lib32 lib lib/arm-linux-gnueabihf
             NO_DEFAULT_PATH
             )
 
@@ -92,7 +92,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
             PATHS
                     ${SSL_DIR}
             PATH_SUFFIXES
-                    bin lib32 lib
+                    bin lib32 lib lib/arm-linux-gnueabihf
             NO_DEFAULT_PATH
             )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)

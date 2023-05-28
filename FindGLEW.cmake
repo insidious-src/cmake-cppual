@@ -11,7 +11,7 @@ find_path(GLEW_INCLUDE_DIR
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(GLEW_LIBRARY
                 NAMES ${LIBRARY_NAMES}
-                PATH_SUFFIXES bin lib32 lib
+                PATH_SUFFIXES bin lib32 lib lib/arm-linux-gnueabihf
                 PATHS
                     ${CMAKE_FIND_ROOT_PATH}
                     ${CMAKE_SOURCE_DIR}

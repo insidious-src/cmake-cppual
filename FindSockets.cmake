@@ -20,7 +20,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
                      PATHS ${CMAKE_FIND_ROOT_PATH}
-                     PATH_SUFFIXES lib32 lib
+                     PATH_SUFFIXES lib32 lib lib/arm-linux-gnueabihf
                      NO_DEFAULT_PATH
                      )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)

@@ -84,7 +84,7 @@ else()
         find_library(EGL_LIBRARY
             NAMES ${EGL_LIBRARY_NAMES}
             PATHS ${CMAKE_FIND_ROOT_PATH}
-            PATH_SUFFIXES bin/x86
+            PATH_SUFFIXES bin/x86 lib/arm-linux-gnueabihf
             )
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(EGL_LIBRARY

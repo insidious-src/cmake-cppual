@@ -57,6 +57,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         lib
         lib/x86
         lib/Win32
+        lib/arm-linux-gnueabihf
       NO_DEFAULT_PATH
       )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)

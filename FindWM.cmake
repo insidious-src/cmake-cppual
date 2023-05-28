@@ -28,7 +28,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         find_library(WM_LIBRARY
                         NAMES ${LIBRARY_NAMES}
                         HINTS ${WM_LIBRARY_HINT_PATH}
-                        PATH_SUFFIXES lib32 lib
+                        PATH_SUFFIXES lib32 lib lib/arm-linux-gnueabihf
                         )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(WM_LIBRARY

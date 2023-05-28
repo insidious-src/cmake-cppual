@@ -33,6 +33,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                         bin
                         lib32
                         lib
+                        lib/arm-linux-gnueabihf
                         System/Library/Frameworks/OpenGLES.framework
                         System/Library/Frameworks/OpenGL.framework/Libraries
                      PATHS

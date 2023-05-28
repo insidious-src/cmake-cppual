@@ -38,7 +38,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         HINTS
             ${OPENAL_LIBRARY_HINT_PATH}
             ENV OPENALDIR
-        PATH_SUFFIXES bin lib32 lib lib/Win32 libs/Win32
+        PATH_SUFFIXES bin lib32 lib lib/Win32 libs/Win32 lib/arm-linux-gnueabihf
         PATHS
         ${OPENAL_LIBRARY_HINT_PATH}
         ${CMAKE_FIND_ROOT_PATH}

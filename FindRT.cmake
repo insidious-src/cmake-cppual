@@ -31,7 +31,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                 HINTS
                         ${RT_LIBRARY_HINT_PATH}
                 PATH_SUFFIXES
-                        bin lib32
+                        bin lib32 lib/arm-linux-gnueabihf
                 )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         find_library(RT_LIBRARY

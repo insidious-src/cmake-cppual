@@ -34,13 +34,13 @@ else()
                         NAMES ${LIBRARY_NAMES}
                         PATHS "C:/Program Files/mosquitto"
                         "/usr/i686-w64-mingw32"
-                        PATH_SUFFIXES lib32 lib bin
+                        PATH_SUFFIXES lib32 lib bin lib/arm-linux-gnueabihf
                         )
             find_library(MOSQUITTO_LIBRARY_CPP
                     NAMES mosquittopp
                     PATHS "C:/Program Files/mosquitto"
                     "/usr/i686-w64-mingw32"
-                    PATH_SUFFIXES lib32 lib bin
+                    PATH_SUFFIXES lib32 lib bin lib/arm-linux-gnueabihf
                     )
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             find_library(MOSQUITTO_LIBRARY

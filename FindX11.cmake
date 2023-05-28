@@ -23,7 +23,7 @@ find_path(X11_INCLUDE_DIR
                 NAMES
                         ${X11_LIBRARY_NAMES}
                 PATH_SUFFIXES
-                        lib32 lib
+                        lib32 lib lib/arm-linux-gnueabihf
                 )
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
             find_library(X11_LIBRARY
