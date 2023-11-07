@@ -10,8 +10,8 @@ if(DEFINED ANDROID)
     set(GL_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
 else()
-    set(GL_INCLUDE_HINT_PATH "/usr")
-    set(GL_LIBRARY_HINT_PATH "/usr")
+    set(GL_INCLUDE_HINT_PATH "/")
+    set(GL_LIBRARY_HINT_PATH "/")
 endif()
 
 find_path(GL_INCLUDE_DIR
@@ -23,7 +23,6 @@ find_path(GL_INCLUDE_DIR
             Headers
             System/Library/Frameworks/OpenGLES.framework/Headers
             System/Library/Frameworks/OpenGL.framework/Headers
-          NO_DEFAULT_PATH
           )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -31,9 +30,10 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                      NAMES ${GL_LIBRARY_NAMES}
                      PATH_SUFFIXES
                         bin
-                        lib32
-                        lib
-                        lib/arm-linux-gnueabihf
+                        usr/lib32
+                        usr/lib
+                        usr/lib/arm-linux-gnueabihf
+                        system/lib
                         System/Library/Frameworks/OpenGLES.framework
                         System/Library/Frameworks/OpenGL.framework/Libraries
                      PATHS
@@ -46,10 +46,11 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                      NAMES ${GL_LIBRARY_NAMES64}
                      PATH_SUFFIXES
                         bin
-                        lib
-                        lib64
+                        usr/lib
+                        usr/lib64
                         lib/x86_64-linux-gnu
-                        lib/aarch64-linux-gnu
+                        usr/lib/aarch64-linux-gnu
+                        system/lib
                         System/Library/Frameworks/OpenGLES.framework
                         System/Library/Frameworks/OpenGL.framework/Libraries
                      PATHS

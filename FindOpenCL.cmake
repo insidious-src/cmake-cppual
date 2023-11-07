@@ -14,13 +14,13 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(OPENCL_INCLUDE_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
     set(OPENCL_LIBRARY_HINT_PATH "/usr/${TOOLCHAIN_PREFIX}")
 else()
-    set(OPENCL_INCLUDE_HINT_PATH "/usr")
-    set(OPENCL_LIBRARY_HINT_PATH "/usr")
+    set(OPENCL_INCLUDE_HINT_PATH "/")
+    set(OPENCL_LIBRARY_HINT_PATH "/")
 endif()
 
 find_path(OPENCL_INCLUDE_DIR
   NAMES
-    CL/cl.h OpenCL/cl.h
+    CL/cl.h OpenCL/cl.h cl.h OpenCL.h
   PATHS
     ${OPENCL_INCLUDE_HINT_PATH}
     ENV AMDAPPSDKROOT
@@ -32,7 +32,6 @@ find_path(OPENCL_INCLUDE_DIR
     include
     OpenCL/common/inc
     "AMD APP/include"
-  NO_DEFAULT_PATH
   )
 
 find_path(_OPENCL_CPP_INCLUDE_DIR CL/cl.hpp OpenCL/cl.hpp DOC "Include for OpenCL CPP bindings"
@@ -51,11 +50,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
       PATH_SUFFIXES
         "AMD APP/lib/x86"
         bin
-        lib32
-        lib
-        lib/x86
-        lib/Win32
-        lib/arm-linux-gnueabihf
+        usr/lib32
+        usr/lib
+        usr/lib/x86
+        usr/lib/Win32
+        usr/lib/arm-linux-gnueabihf
+        vendor/lib
         OpenCL/common/lib/Win32
       NO_DEFAULT_PATH
       )
@@ -72,12 +72,13 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
       PATH_SUFFIXES
         "AMD APP/lib/x86_64"
         bin
-        lib
-        lib64
-        lib/x86_64-linux-gnu
-        lib/aarch64-linux-gnu
-        lib/x86_64
-        lib/x64
+        usr/lib
+        usr/lib64
+        usr/lib/x86_64-linux-gnu
+        usr/lib/aarch64-linux-gnu
+        usr/lib/x86_64
+        usr/lib/x64
+        vendor/lib
         OpenCL/common/lib/x64
       NO_DEFAULT_PATH
       )

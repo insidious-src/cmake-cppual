@@ -13,8 +13,8 @@ if(DEFINED ANDROID)
     set(EGL_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
 else()
-    set(EGL_INCLUDE_HINT_PATH "/usr")
-    set(EGL_LIBRARY_HINT_PATH "/usr")
+    set(EGL_INCLUDE_HINT_PATH "/")
+    set(EGL_LIBRARY_HINT_PATH "/")
 endif()
 
 if(NOT WIN32)
@@ -48,8 +48,9 @@ if(NOT WIN32)
             PATHS
                 ${CMAKE_FIND_ROOT_PATH}
             PATH_SUFFIXES
-                lib32
-                lib
+                usr/lib32
+                usr/lib
+                system/lib
                 System/Library/Frameworks/AGL.framework
             NO_DEFAULT_PATH
             )
@@ -63,10 +64,11 @@ if(NOT WIN32)
             PATHS
                 ${CMAKE_FIND_ROOT_PATH}
             PATH_SUFFIXES
-                lib
-                lib64
-                lib/x86_64-linux-gnu
-                lib/aarch64-linux-gnu
+                usr/lib
+                usr/lib64
+                usr/lib/x86_64-linux-gnu
+                usr/lib/aarch64-linux-gnu
+                system/lib
                 System/Library/Frameworks/AGL.framework
             NO_DEFAULT_PATH
             )

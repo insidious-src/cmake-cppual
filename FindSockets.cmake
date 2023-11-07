@@ -9,8 +9,8 @@ if(DEFINED ANDROID)
     set(SOCKETS_LIBRARY_HINT_PATH
         "${ANDROID_TOOLCHAIN_ROOT}/sysroot/usr/lib/${ANDROID_TOOLCHAIN_MACHINE_NAME}/${ANDROID_NATIVE_API_LEVEL}")
 else()
-    set(SOCKETS_INCLUDE_HINT_PATH "/usr")
-    set(SOCKETS_LIBRARY_HINT_PATH "/usr")
+    set(SOCKETS_INCLUDE_HINT_PATH "/")
+    set(SOCKETS_LIBRARY_HINT_PATH "/")
 endif()
 
 find_path(SOCKETS_INCLUDE_DIR NAMES ${HEADER_FILES})
@@ -20,7 +20,11 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
                      PATHS ${CMAKE_FIND_ROOT_PATH}
-                     PATH_SUFFIXES lib32 lib lib/arm-linux-gnueabihf
+                     PATH_SUFFIXES 
+                         usr/lib32
+                         usr/lib 
+                         usr/lib/arm-linux-gnueabihf
+                         system/lib
                      NO_DEFAULT_PATH
                      )
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -28,7 +32,12 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
                      NAMES ${LIBRARY_NAMES}
                      HINTS ${SOCKETS_LIBRARY_HINT_PATH}
                      PATHS ${CMAKE_FIND_ROOT_PATH}
-                     PATH_SUFFIXES lib lib64 lib/x86_64-linux-gnu lib/aarch64-linux-gnu
+                     PATH_SUFFIXES 
+                         usr/lib 
+                         usr/lib64 
+                         usr/lib/x86_64-linux-gnu 
+                         usr/lib/aarch64-linux-gnu
+                         system/lib
                      NO_DEFAULT_PATH
                      )
 endif()
