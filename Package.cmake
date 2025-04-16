@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-cmake_policy(SET CMP0026 OLD) # allow use of the LOCATION target property
+#cmake_policy(SET CMP0026 OLD) # allow use of the LOCATION target property
 cmake_policy(SET CMP0109 OLD)
 
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS TRUE)
