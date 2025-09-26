@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 # store the current source directory for future use
 set(QT_ANDROID_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
