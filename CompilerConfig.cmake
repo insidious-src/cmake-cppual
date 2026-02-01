@@ -39,15 +39,15 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s")
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -s")
 set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} -s")
 
-# ensure C++17 support
-CHECK_CXX_COMPILER_FLAG("-std=c++23" COMPILER_SUPPORTS_CXX23)
+# ensure C++26 support
+CHECK_CXX_COMPILER_FLAG("-std=c++26" COMPILER_SUPPORTS_CXX26)
 
-if(COMPILER_SUPPORTS_CXX23)
-    #add_definitions(-std=c++23)
+if(COMPILER_SUPPORTS_CXX26)
+    #add_definitions(-std=c++26)
 #elseif(COMPILER_SUPPORTS_CXX0Z)
-    #add_definitions(-std=c++1z)
+    #add_definitions(-std=c++2y)
 else()
-    message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++23 support.")
+    message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++26 support.")
 endif()
 
 # use optimized instruction set
